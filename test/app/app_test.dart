@@ -5,9 +5,9 @@ import 'package:app_entrenamiento/features/profile/presentation/profile_screen.d
 import 'package:app_entrenamiento/features/progress/presentation/progress_screen.dart';
 import 'package:app_entrenamiento/features/routines/presentation/routines_screen.dart';
 import 'package:app_entrenamiento/features/workout/presentation/workout_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 Future<void> pumpApp(WidgetTester tester) async {
   await tester.pumpWidget(const ProviderScope(child: App()));
