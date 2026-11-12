@@ -19,17 +19,27 @@ class FakeExerciseRepository implements ExerciseRepository {
 
   void _notify() => _changes.add(null);
 
-  @override
-  Stream<List<Exercise>> watchAll() async* {
-    yield _active;
-    yield* _changes.stream.map((_) => _active);
+  /// Emits the current value on listen and again after every change. Like
+  /// Drift, changes made while the subscription is paused are delivered on
+  /// resume (Riverpod pauses providers of off-screen routes).
+  Stream<T> _watch<T>(T Function() read) {
+    late final StreamController<T> controller;
+    StreamSubscription<void>? changes;
+    controller = StreamController<T>(
+      onListen: () {
+        changes = _changes.stream.listen((_) => controller.add(read()));
+        controller.add(read());
+      },
+      onCancel: () => changes?.cancel(),
+    );
+    return controller.stream;
   }
 
   @override
-  Stream<Exercise?> watchById(String id) async* {
-    yield _items[id];
-    yield* _changes.stream.map((_) => _items[id]);
-  }
+  Stream<List<Exercise>> watchAll() => _watch(() => _active);
+
+  @override
+  Stream<Exercise?> watchById(String id) => _watch(() => _items[id]);
 
   @override
   Future<Exercise?> getById(String id) async => _items[id];

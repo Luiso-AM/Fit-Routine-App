@@ -42,6 +42,11 @@ class _ExerciseListScreenState extends ConsumerState<ExerciseListScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text(AppStrings.exerciseLibrary)),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.go(AppRoutes.exerciseNew),
+        icon: const Icon(Icons.add),
+        label: const Text(ExerciseStrings.newExercise),
+      ),
       body: Column(
         children: [
           Padding(
