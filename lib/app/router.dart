@@ -1,21 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/routing/app_routes.dart';
 import '../core/widgets/app_shell.dart';
 import '../features/dashboard/presentation/dashboard_screen.dart';
+import '../features/exercises/presentation/screens/exercise_detail_screen.dart';
+import '../features/exercises/presentation/screens/exercise_list_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/progress/presentation/progress_screen.dart';
 import '../features/routines/presentation/routines_screen.dart';
 import '../features/workout/presentation/workout_screen.dart';
-
-/// Top-level route paths, one per bottom navigation tab.
-abstract final class AppRoutes {
-  static const String home = '/';
-  static const String workout = '/workout';
-  static const String routines = '/routines';
-  static const String progress = '/progress';
-  static const String profile = '/profile';
-}
 
 final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
@@ -46,6 +40,20 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.routines,
                 builder: (context, state) => const RoutinesScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'exercises',
+                    builder: (context, state) => const ExerciseListScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) => ExerciseDetailScreen(
+                          exerciseId: state.pathParameters['id']!,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
