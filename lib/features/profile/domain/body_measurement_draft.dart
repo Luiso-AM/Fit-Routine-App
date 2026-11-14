@@ -5,10 +5,10 @@ import 'body_measurement.dart';
 
 part 'body_measurement_draft.freezed.dart';
 
-const double kMinCircumferenceCm = 10;
-const double kMaxCircumferenceCm = 300;
-const double kMinBodyFatPct = 1;
-const double kMaxBodyFatPct = 75;
+const int kMinCircumferenceCm = 10;
+const int kMaxCircumferenceCm = 300;
+const int kMinBodyFatPct = 1;
+const int kMaxBodyFatPct = 75;
 
 enum BodyMeasurementValidationError {
   dateRequired,

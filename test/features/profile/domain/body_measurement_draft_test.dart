@@ -35,12 +35,12 @@ void main() {
       'then each field is reported', () {
     final draft = BodyMeasurementDraft(
       date: _date,
-      waistCm: kMinCircumferenceCm - 1,
-      chestCm: kMaxCircumferenceCm + 1,
+      waistCm: (kMinCircumferenceCm - 1).toDouble(),
+      chestCm: (kMaxCircumferenceCm + 1).toDouble(),
       armCm: 0,
       legCm: 500,
       hipCm: 5,
-      bodyFatPct: kMaxBodyFatPct + 1,
+      bodyFatPct: (kMaxBodyFatPct + 1).toDouble(),
     );
     expect(draft.validate(today: _today), {
       BodyMeasurementValidationError.waistOutOfRange,

@@ -5,8 +5,8 @@ import 'body_weight_entry.dart';
 
 part 'body_weight_draft.freezed.dart';
 
-const double kMinBodyWeightKg = 20;
-const double kMaxBodyWeightKg = 400;
+const int kMinBodyWeightKg = 20;
+const int kMaxBodyWeightKg = 400;
 
 enum BodyWeightValidationError {
   dateRequired,

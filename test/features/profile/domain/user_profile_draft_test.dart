@@ -92,7 +92,7 @@ void main() {
     test('given values outside their limits, when validated, '
         'then each one is reported', () {
       final draft = _valid.copyWith(
-        heightCm: kMaxHeightCm + 1,
+        heightCm: (kMaxHeightCm + 1).toDouble(),
         daysPerWeek: 0,
         sessionDurationMin: kMaxSessionDurationMin + 1,
       );
@@ -106,12 +106,12 @@ void main() {
     test('given values on their limits, when validated, '
         'then they are accepted', () {
       final low = _valid.copyWith(
-        heightCm: kMinHeightCm,
+        heightCm: (kMinHeightCm).toDouble(),
         daysPerWeek: kMinDaysPerWeek,
         sessionDurationMin: kMinSessionDurationMin,
       );
       final high = _valid.copyWith(
-        heightCm: kMaxHeightCm,
+        heightCm: (kMaxHeightCm).toDouble(),
         daysPerWeek: kMaxDaysPerWeek,
         sessionDurationMin: kMaxSessionDurationMin,
       );

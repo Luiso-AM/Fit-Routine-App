@@ -10,8 +10,8 @@ import 'user_profile.dart';
 part 'user_profile_draft.freezed.dart';
 
 const int kAliasMaxLength = 30;
-const double kMinHeightCm = 100;
-const double kMaxHeightCm = 250;
+const int kMinHeightCm = 100;
+const int kMaxHeightCm = 250;
 const int kMinDaysPerWeek = 1;
 const int kMaxDaysPerWeek = 7;
 const int kMinSessionDurationMin = 10;

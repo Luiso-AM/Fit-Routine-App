@@ -8,6 +8,9 @@ abstract final class AppRoutes {
   static const String progress = '/progress';
   static const String profile = '/profile';
 
+  /// First-run profile creation, outside the tab shell.
+  static const String onboarding = '/onboarding';
+
   // Exercise library, nested in the routines tab.
   static const String exercises = '$routines/exercises';
   static const String exerciseNew = '$exercises/new';

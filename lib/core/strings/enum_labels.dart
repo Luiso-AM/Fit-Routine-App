@@ -2,9 +2,12 @@ import '../../features/exercises/domain/enums/difficulty.dart';
 import '../../features/exercises/domain/enums/equipment.dart';
 import '../../features/exercises/domain/enums/exercise_type.dart';
 import '../../features/exercises/domain/enums/muscle_group.dart';
+import '../../features/profile/domain/enums/experience_level.dart';
+import '../../features/profile/domain/enums/sex.dart';
+import '../../features/profile/domain/enums/training_goal.dart';
 
 // Spanish labels for domain enums. They live in `core` because several
-// features (exercises, routines, workout) display them.
+// features (exercises, profile, routines, workout) display them.
 
 extension MuscleGroupLabel on MuscleGroup {
   String get label => switch (this) {
@@ -48,5 +51,30 @@ extension DifficultyLabel on Difficulty {
     Difficulty.beginner => 'Principiante',
     Difficulty.intermediate => 'Intermedio',
     Difficulty.advanced => 'Avanzado',
+  };
+}
+
+extension SexLabel on Sex {
+  String get label => switch (this) {
+    Sex.male => 'Hombre',
+    Sex.female => 'Mujer',
+  };
+}
+
+extension ExperienceLevelLabel on ExperienceLevel {
+  String get label => switch (this) {
+    ExperienceLevel.beginner => 'Principiante',
+    ExperienceLevel.intermediate => 'Intermedio',
+    ExperienceLevel.advanced => 'Avanzado',
+  };
+}
+
+extension TrainingGoalLabel on TrainingGoal {
+  String get label => switch (this) {
+    TrainingGoal.hypertrophy => 'Ganar masa muscular',
+    TrainingGoal.strength => 'Ganar fuerza',
+    TrainingGoal.fatLoss => 'Perder grasa',
+    TrainingGoal.recomposition => 'Recomposición corporal',
+    TrainingGoal.maintenance => 'Mantenerme en forma',
   };
 }
