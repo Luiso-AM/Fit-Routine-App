@@ -52,6 +52,23 @@ class SessionExercises extends Table with EntityColumns {
 
   IntColumn get position => integer()();
 
+  // Targets copied from the routine when the session starts, so editing the
+  // routine later does not change history. `null` for exercises added
+  // during the session or in free sessions.
+  IntColumn get targetSets =>
+      integer().nullable().check(targetSets.isBiggerThanValue(0))();
+
+  IntColumn get targetRepsMin =>
+      integer().nullable().check(targetRepsMin.isBiggerThanValue(0))();
+
+  IntColumn get targetRepsMax => integer().nullable().check(
+    targetRepsMax.isBiggerOrEqual(targetRepsMin),
+  )();
+
+  /// Rest after each completed set, used by the rest timer.
+  IntColumn get restSeconds =>
+      integer().nullable().check(restSeconds.isBiggerOrEqualValue(0))();
+
   TextColumn get notes => text().withDefault(const Constant(''))();
 }
 

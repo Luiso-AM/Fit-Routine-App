@@ -12,6 +12,7 @@ import '../../features/profile/domain/enums/training_goal.dart';
 import '../../features/routines/domain/enums/routine_template_type.dart';
 import '../../features/workout/domain/enums/session_status.dart';
 import '../units/weight_unit.dart';
+import 'app_database.steps.dart';
 import 'converters/enum_list_converter.dart';
 import 'tables/body_tables.dart';
 import 'tables/exercises_table.dart';
@@ -44,11 +45,21 @@ class AppDatabase extends _$AppDatabase {
   /// Bump on every schema change and add a step in [migration].
   /// Never drop the user's database to "fix" a migration.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
+    onUpgrade: stepByStep(
+      from1To2: (m, schema) async {
+        // Session exercises keep a copy of their routine targets.
+        final table = schema.sessionExercises;
+        await m.addColumn(table, table.targetSets);
+        await m.addColumn(table, table.targetRepsMin);
+        await m.addColumn(table, table.targetRepsMax);
+        await m.addColumn(table, table.restSeconds);
+      },
+    ),
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },

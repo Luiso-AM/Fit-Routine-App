@@ -5052,6 +5052,54 @@ class $SessionExercisesTable extends SessionExercises
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _targetSetsMeta = const VerificationMeta(
+    'targetSets',
+  );
+  @override
+  late final GeneratedColumn<int> targetSets = GeneratedColumn<int>(
+    'target_sets',
+    aliasedName,
+    true,
+    check: () => ComparableExpr(targetSets).isBiggerThanValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _targetRepsMinMeta = const VerificationMeta(
+    'targetRepsMin',
+  );
+  @override
+  late final GeneratedColumn<int> targetRepsMin = GeneratedColumn<int>(
+    'target_reps_min',
+    aliasedName,
+    true,
+    check: () => ComparableExpr(targetRepsMin).isBiggerThanValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _targetRepsMaxMeta = const VerificationMeta(
+    'targetRepsMax',
+  );
+  @override
+  late final GeneratedColumn<int> targetRepsMax = GeneratedColumn<int>(
+    'target_reps_max',
+    aliasedName,
+    true,
+    check: () => ComparableExpr(targetRepsMax).isBiggerOrEqual(targetRepsMin),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _restSecondsMeta = const VerificationMeta(
+    'restSeconds',
+  );
+  @override
+  late final GeneratedColumn<int> restSeconds = GeneratedColumn<int>(
+    'rest_seconds',
+    aliasedName,
+    true,
+    check: () => ComparableExpr(restSeconds).isBiggerOrEqualValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -5070,6 +5118,10 @@ class $SessionExercisesTable extends SessionExercises
     sessionId,
     exerciseId,
     position,
+    targetSets,
+    targetRepsMin,
+    targetRepsMax,
+    restSeconds,
     notes,
   ];
   @override
@@ -5123,6 +5175,39 @@ class $SessionExercisesTable extends SessionExercises
     } else if (isInserting) {
       context.missing(_positionMeta);
     }
+    if (data.containsKey('target_sets')) {
+      context.handle(
+        _targetSetsMeta,
+        targetSets.isAcceptableOrUnknown(data['target_sets']!, _targetSetsMeta),
+      );
+    }
+    if (data.containsKey('target_reps_min')) {
+      context.handle(
+        _targetRepsMinMeta,
+        targetRepsMin.isAcceptableOrUnknown(
+          data['target_reps_min']!,
+          _targetRepsMinMeta,
+        ),
+      );
+    }
+    if (data.containsKey('target_reps_max')) {
+      context.handle(
+        _targetRepsMaxMeta,
+        targetRepsMax.isAcceptableOrUnknown(
+          data['target_reps_max']!,
+          _targetRepsMaxMeta,
+        ),
+      );
+    }
+    if (data.containsKey('rest_seconds')) {
+      context.handle(
+        _restSecondsMeta,
+        restSeconds.isAcceptableOrUnknown(
+          data['rest_seconds']!,
+          _restSecondsMeta,
+        ),
+      );
+    }
     if (data.containsKey('notes')) {
       context.handle(
         _notesMeta,
@@ -5162,6 +5247,22 @@ class $SessionExercisesTable extends SessionExercises
         DriftSqlType.int,
         data['${effectivePrefix}position'],
       )!,
+      targetSets: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_sets'],
+      ),
+      targetRepsMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_reps_min'],
+      ),
+      targetRepsMax: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target_reps_max'],
+      ),
+      restSeconds: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rest_seconds'],
+      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -5185,6 +5286,12 @@ class SessionExerciseRow extends DataClass
   /// Exercises are soft-deleted, so this reference never cascades.
   final String exerciseId;
   final int position;
+  final int? targetSets;
+  final int? targetRepsMin;
+  final int? targetRepsMax;
+
+  /// Rest after each completed set, used by the rest timer.
+  final int? restSeconds;
   final String notes;
   const SessionExerciseRow({
     required this.id,
@@ -5193,6 +5300,10 @@ class SessionExerciseRow extends DataClass
     required this.sessionId,
     required this.exerciseId,
     required this.position,
+    this.targetSets,
+    this.targetRepsMin,
+    this.targetRepsMax,
+    this.restSeconds,
     required this.notes,
   });
   @override
@@ -5204,6 +5315,18 @@ class SessionExerciseRow extends DataClass
     map['session_id'] = Variable<String>(sessionId);
     map['exercise_id'] = Variable<String>(exerciseId);
     map['position'] = Variable<int>(position);
+    if (!nullToAbsent || targetSets != null) {
+      map['target_sets'] = Variable<int>(targetSets);
+    }
+    if (!nullToAbsent || targetRepsMin != null) {
+      map['target_reps_min'] = Variable<int>(targetRepsMin);
+    }
+    if (!nullToAbsent || targetRepsMax != null) {
+      map['target_reps_max'] = Variable<int>(targetRepsMax);
+    }
+    if (!nullToAbsent || restSeconds != null) {
+      map['rest_seconds'] = Variable<int>(restSeconds);
+    }
     map['notes'] = Variable<String>(notes);
     return map;
   }
@@ -5216,6 +5339,18 @@ class SessionExerciseRow extends DataClass
       sessionId: Value(sessionId),
       exerciseId: Value(exerciseId),
       position: Value(position),
+      targetSets: targetSets == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetSets),
+      targetRepsMin: targetRepsMin == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetRepsMin),
+      targetRepsMax: targetRepsMax == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetRepsMax),
+      restSeconds: restSeconds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(restSeconds),
       notes: Value(notes),
     );
   }
@@ -5232,6 +5367,10 @@ class SessionExerciseRow extends DataClass
       sessionId: serializer.fromJson<String>(json['sessionId']),
       exerciseId: serializer.fromJson<String>(json['exerciseId']),
       position: serializer.fromJson<int>(json['position']),
+      targetSets: serializer.fromJson<int?>(json['targetSets']),
+      targetRepsMin: serializer.fromJson<int?>(json['targetRepsMin']),
+      targetRepsMax: serializer.fromJson<int?>(json['targetRepsMax']),
+      restSeconds: serializer.fromJson<int?>(json['restSeconds']),
       notes: serializer.fromJson<String>(json['notes']),
     );
   }
@@ -5245,6 +5384,10 @@ class SessionExerciseRow extends DataClass
       'sessionId': serializer.toJson<String>(sessionId),
       'exerciseId': serializer.toJson<String>(exerciseId),
       'position': serializer.toJson<int>(position),
+      'targetSets': serializer.toJson<int?>(targetSets),
+      'targetRepsMin': serializer.toJson<int?>(targetRepsMin),
+      'targetRepsMax': serializer.toJson<int?>(targetRepsMax),
+      'restSeconds': serializer.toJson<int?>(restSeconds),
       'notes': serializer.toJson<String>(notes),
     };
   }
@@ -5256,6 +5399,10 @@ class SessionExerciseRow extends DataClass
     String? sessionId,
     String? exerciseId,
     int? position,
+    Value<int?> targetSets = const Value.absent(),
+    Value<int?> targetRepsMin = const Value.absent(),
+    Value<int?> targetRepsMax = const Value.absent(),
+    Value<int?> restSeconds = const Value.absent(),
     String? notes,
   }) => SessionExerciseRow(
     id: id ?? this.id,
@@ -5264,6 +5411,14 @@ class SessionExerciseRow extends DataClass
     sessionId: sessionId ?? this.sessionId,
     exerciseId: exerciseId ?? this.exerciseId,
     position: position ?? this.position,
+    targetSets: targetSets.present ? targetSets.value : this.targetSets,
+    targetRepsMin: targetRepsMin.present
+        ? targetRepsMin.value
+        : this.targetRepsMin,
+    targetRepsMax: targetRepsMax.present
+        ? targetRepsMax.value
+        : this.targetRepsMax,
+    restSeconds: restSeconds.present ? restSeconds.value : this.restSeconds,
     notes: notes ?? this.notes,
   );
   SessionExerciseRow copyWithCompanion(SessionExercisesCompanion data) {
@@ -5276,6 +5431,18 @@ class SessionExerciseRow extends DataClass
           ? data.exerciseId.value
           : this.exerciseId,
       position: data.position.present ? data.position.value : this.position,
+      targetSets: data.targetSets.present
+          ? data.targetSets.value
+          : this.targetSets,
+      targetRepsMin: data.targetRepsMin.present
+          ? data.targetRepsMin.value
+          : this.targetRepsMin,
+      targetRepsMax: data.targetRepsMax.present
+          ? data.targetRepsMax.value
+          : this.targetRepsMax,
+      restSeconds: data.restSeconds.present
+          ? data.restSeconds.value
+          : this.restSeconds,
       notes: data.notes.present ? data.notes.value : this.notes,
     );
   }
@@ -5289,6 +5456,10 @@ class SessionExerciseRow extends DataClass
           ..write('sessionId: $sessionId, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('position: $position, ')
+          ..write('targetSets: $targetSets, ')
+          ..write('targetRepsMin: $targetRepsMin, ')
+          ..write('targetRepsMax: $targetRepsMax, ')
+          ..write('restSeconds: $restSeconds, ')
           ..write('notes: $notes')
           ..write(')'))
         .toString();
@@ -5302,6 +5473,10 @@ class SessionExerciseRow extends DataClass
     sessionId,
     exerciseId,
     position,
+    targetSets,
+    targetRepsMin,
+    targetRepsMax,
+    restSeconds,
     notes,
   );
   @override
@@ -5314,6 +5489,10 @@ class SessionExerciseRow extends DataClass
           other.sessionId == this.sessionId &&
           other.exerciseId == this.exerciseId &&
           other.position == this.position &&
+          other.targetSets == this.targetSets &&
+          other.targetRepsMin == this.targetRepsMin &&
+          other.targetRepsMax == this.targetRepsMax &&
+          other.restSeconds == this.restSeconds &&
           other.notes == this.notes);
 }
 
@@ -5324,6 +5503,10 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
   final Value<String> sessionId;
   final Value<String> exerciseId;
   final Value<int> position;
+  final Value<int?> targetSets;
+  final Value<int?> targetRepsMin;
+  final Value<int?> targetRepsMax;
+  final Value<int?> restSeconds;
   final Value<String> notes;
   final Value<int> rowid;
   const SessionExercisesCompanion({
@@ -5333,6 +5516,10 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
     this.sessionId = const Value.absent(),
     this.exerciseId = const Value.absent(),
     this.position = const Value.absent(),
+    this.targetSets = const Value.absent(),
+    this.targetRepsMin = const Value.absent(),
+    this.targetRepsMax = const Value.absent(),
+    this.restSeconds = const Value.absent(),
     this.notes = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -5343,6 +5530,10 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
     required String sessionId,
     required String exerciseId,
     required int position,
+    this.targetSets = const Value.absent(),
+    this.targetRepsMin = const Value.absent(),
+    this.targetRepsMax = const Value.absent(),
+    this.restSeconds = const Value.absent(),
     this.notes = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : sessionId = Value(sessionId),
@@ -5355,6 +5546,10 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
     Expression<String>? sessionId,
     Expression<String>? exerciseId,
     Expression<int>? position,
+    Expression<int>? targetSets,
+    Expression<int>? targetRepsMin,
+    Expression<int>? targetRepsMax,
+    Expression<int>? restSeconds,
     Expression<String>? notes,
     Expression<int>? rowid,
   }) {
@@ -5365,6 +5560,10 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
       if (sessionId != null) 'session_id': sessionId,
       if (exerciseId != null) 'exercise_id': exerciseId,
       if (position != null) 'position': position,
+      if (targetSets != null) 'target_sets': targetSets,
+      if (targetRepsMin != null) 'target_reps_min': targetRepsMin,
+      if (targetRepsMax != null) 'target_reps_max': targetRepsMax,
+      if (restSeconds != null) 'rest_seconds': restSeconds,
       if (notes != null) 'notes': notes,
       if (rowid != null) 'rowid': rowid,
     });
@@ -5377,6 +5576,10 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
     Value<String>? sessionId,
     Value<String>? exerciseId,
     Value<int>? position,
+    Value<int?>? targetSets,
+    Value<int?>? targetRepsMin,
+    Value<int?>? targetRepsMax,
+    Value<int?>? restSeconds,
     Value<String>? notes,
     Value<int>? rowid,
   }) {
@@ -5387,6 +5590,10 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
       sessionId: sessionId ?? this.sessionId,
       exerciseId: exerciseId ?? this.exerciseId,
       position: position ?? this.position,
+      targetSets: targetSets ?? this.targetSets,
+      targetRepsMin: targetRepsMin ?? this.targetRepsMin,
+      targetRepsMax: targetRepsMax ?? this.targetRepsMax,
+      restSeconds: restSeconds ?? this.restSeconds,
       notes: notes ?? this.notes,
       rowid: rowid ?? this.rowid,
     );
@@ -5413,6 +5620,18 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
     if (position.present) {
       map['position'] = Variable<int>(position.value);
     }
+    if (targetSets.present) {
+      map['target_sets'] = Variable<int>(targetSets.value);
+    }
+    if (targetRepsMin.present) {
+      map['target_reps_min'] = Variable<int>(targetRepsMin.value);
+    }
+    if (targetRepsMax.present) {
+      map['target_reps_max'] = Variable<int>(targetRepsMax.value);
+    }
+    if (restSeconds.present) {
+      map['rest_seconds'] = Variable<int>(restSeconds.value);
+    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -5431,6 +5650,10 @@ class SessionExercisesCompanion extends UpdateCompanion<SessionExerciseRow> {
           ..write('sessionId: $sessionId, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('position: $position, ')
+          ..write('targetSets: $targetSets, ')
+          ..write('targetRepsMin: $targetRepsMin, ')
+          ..write('targetRepsMax: $targetRepsMax, ')
+          ..write('restSeconds: $restSeconds, ')
           ..write('notes: $notes, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -9723,6 +9946,10 @@ typedef $$SessionExercisesTableCreateCompanionBuilder =
       required String sessionId,
       required String exerciseId,
       required int position,
+      Value<int?> targetSets,
+      Value<int?> targetRepsMin,
+      Value<int?> targetRepsMax,
+      Value<int?> restSeconds,
       Value<String> notes,
       Value<int> rowid,
     });
@@ -9734,6 +9961,10 @@ typedef $$SessionExercisesTableUpdateCompanionBuilder =
       Value<String> sessionId,
       Value<String> exerciseId,
       Value<int> position,
+      Value<int?> targetSets,
+      Value<int?> targetRepsMin,
+      Value<int?> targetRepsMax,
+      Value<int?> restSeconds,
       Value<String> notes,
       Value<int> rowid,
     });
@@ -9830,6 +10061,26 @@ class $$SessionExercisesTableFilterComposer
 
   ColumnFilters<int> get position => $composableBuilder(
     column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetSets => $composableBuilder(
+    column: $table.targetSets,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetRepsMin => $composableBuilder(
+    column: $table.targetRepsMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get targetRepsMax => $composableBuilder(
+    column: $table.targetRepsMax,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get restSeconds => $composableBuilder(
+    column: $table.restSeconds,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9939,6 +10190,26 @@ class $$SessionExercisesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get targetSets => $composableBuilder(
+    column: $table.targetSets,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get targetRepsMin => $composableBuilder(
+    column: $table.targetRepsMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get targetRepsMax => $composableBuilder(
+    column: $table.targetRepsMax,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get restSeconds => $composableBuilder(
+    column: $table.restSeconds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -10011,6 +10282,26 @@ class $$SessionExercisesTableAnnotationComposer
 
   GeneratedColumn<int> get position =>
       $composableBuilder(column: $table.position, builder: (column) => column);
+
+  GeneratedColumn<int> get targetSets => $composableBuilder(
+    column: $table.targetSets,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get targetRepsMin => $composableBuilder(
+    column: $table.targetRepsMin,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get targetRepsMax => $composableBuilder(
+    column: $table.targetRepsMax,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get restSeconds => $composableBuilder(
+    column: $table.restSeconds,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
@@ -10127,6 +10418,10 @@ class $$SessionExercisesTableTableManager
                 Value<String> sessionId = const Value.absent(),
                 Value<String> exerciseId = const Value.absent(),
                 Value<int> position = const Value.absent(),
+                Value<int?> targetSets = const Value.absent(),
+                Value<int?> targetRepsMin = const Value.absent(),
+                Value<int?> targetRepsMax = const Value.absent(),
+                Value<int?> restSeconds = const Value.absent(),
                 Value<String> notes = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SessionExercisesCompanion(
@@ -10136,6 +10431,10 @@ class $$SessionExercisesTableTableManager
                 sessionId: sessionId,
                 exerciseId: exerciseId,
                 position: position,
+                targetSets: targetSets,
+                targetRepsMin: targetRepsMin,
+                targetRepsMax: targetRepsMax,
+                restSeconds: restSeconds,
                 notes: notes,
                 rowid: rowid,
               ),
@@ -10147,6 +10446,10 @@ class $$SessionExercisesTableTableManager
                 required String sessionId,
                 required String exerciseId,
                 required int position,
+                Value<int?> targetSets = const Value.absent(),
+                Value<int?> targetRepsMin = const Value.absent(),
+                Value<int?> targetRepsMax = const Value.absent(),
+                Value<int?> restSeconds = const Value.absent(),
                 Value<String> notes = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SessionExercisesCompanion.insert(
@@ -10156,6 +10459,10 @@ class $$SessionExercisesTableTableManager
                 sessionId: sessionId,
                 exerciseId: exerciseId,
                 position: position,
+                targetSets: targetSets,
+                targetRepsMin: targetRepsMin,
+                targetRepsMax: targetRepsMax,
+                restSeconds: restSeconds,
                 notes: notes,
                 rowid: rowid,
               ),
