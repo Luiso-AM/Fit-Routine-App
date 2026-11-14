@@ -26,6 +26,14 @@ abstract final class WorkoutStrings {
   static const String continueActive = 'Continuar el actual';
   static const String discardAndStart = 'Descartar y empezar';
 
+  // Resuming at launch.
+  static const String resumeTitle = 'Tienes un entrenamiento en curso';
+  static const String continueWorkout = 'Continuar';
+
+  static String resumeMessage(String name) =>
+      '$name sigue abierto y tus series están guardadas. '
+      '¿Quieres continuarlo?';
+
   // Session in progress.
   static const String paused = 'En pausa';
   static const String pause = 'Pausar';

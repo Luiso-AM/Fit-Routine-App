@@ -18,6 +18,14 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
+/// Closes the dialog shown at launch for a session in progress, without
+/// answering it.
+Future<void> _dismissResumePrompt(WidgetTester tester) async {
+  expect(find.text(WorkoutStrings.resumeTitle), findsOneWidget);
+  await tester.tapAt(const Offset(8, 8));
+  await tester.pumpAndSettle();
+}
+
 Finder _appBarText(String text) =>
     find.descendant(of: find.byType(AppBar), matching: find.text(text));
 
@@ -100,6 +108,7 @@ void main() {
         routines: [pushRoutine],
         sessions: [activeSession()],
       );
+      await _dismissResumePrompt(tester);
 
       await _tap(tester, find.text(RoutineStrings.startWorkout));
       expect(find.text(WorkoutStrings.activeExistsTitle), findsOneWidget);
@@ -120,6 +129,7 @@ void main() {
         routines: [pushRoutine],
         sessions: [activeSession()],
       );
+      await _dismissResumePrompt(tester);
 
       await _tap(tester, find.text(RoutineStrings.startWorkout));
       await _tap(tester, find.text(WorkoutStrings.continueActive));
@@ -130,12 +140,16 @@ void main() {
   });
 
   group('session in progress', () {
-    Future<PumpedApp> pumpActive(WidgetTester tester) => pumpApp(
-      tester,
-      location: AppRoutes.workout,
-      exercises: workoutExercises,
-      sessions: [activeSession()],
-    );
+    Future<PumpedApp> pumpActive(WidgetTester tester) async {
+      final app = await pumpApp(
+        tester,
+        location: AppRoutes.workout,
+        exercises: workoutExercises,
+        sessions: [activeSession()],
+      );
+      await _dismissResumePrompt(tester);
+      return app;
+    }
 
     testWidgets('given a session, when it renders, '
         'then it shows the clock, targets and sets', (tester) async {

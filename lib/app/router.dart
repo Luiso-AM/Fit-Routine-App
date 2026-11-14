@@ -22,6 +22,7 @@ import '../features/routines/presentation/screens/routine_detail_screen.dart';
 import '../features/routines/presentation/screens/routines_screen.dart';
 import '../features/workout/presentation/screens/start_workout_screen.dart';
 import '../features/workout/presentation/screens/workout_exercise_picker_screen.dart';
+import '../features/workout/presentation/widgets/resume_workout_prompt.dart';
 import '../features/workout/presentation/workout_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -47,8 +48,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const OnboardingScreen(),
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            AppShell(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) => ResumeWorkoutPrompt(
+          child: AppShell(navigationShell: navigationShell),
+        ),
         branches: [
           StatefulShellBranch(
             routes: [
