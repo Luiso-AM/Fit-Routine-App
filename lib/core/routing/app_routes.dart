@@ -20,6 +20,12 @@ abstract final class AppRoutes {
   static String profileMeasurementEdit(String id) =>
       '$profileMeasurements/$id/edit';
 
+  // Workout tab.
+  static const String workoutAddExercises = '$workout/add';
+
+  /// Starts a session from a routine day, then opens the workout tab.
+  static String workoutStart(String dayId) => '$workout/start/$dayId';
+
   // Routines tab.
   static String routineDetail(String id) => '$routines/$id';
 

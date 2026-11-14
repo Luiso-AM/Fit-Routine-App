@@ -62,6 +62,7 @@ abstract final class RoutineStrings {
   static const String dayNotFound = 'Este día no existe o fue eliminado.';
   static const String noExercisesInDay = 'Agrega ejercicios a este día.';
   static const String addExercises = 'Agregar ejercicios';
+  static const String startWorkout = 'Iniciar entrenamiento';
   static const String missingExercise = 'Ejercicio eliminado de la biblioteca';
   static const String reorderExercises = 'Arrastra para reordenar';
   static const String sets = 'Series';

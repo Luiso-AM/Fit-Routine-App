@@ -224,6 +224,20 @@ class _DayView extends ConsumerWidget {
           const SliverPadding(padding: EdgeInsets.only(bottom: 96)),
         ],
       ),
+      bottomNavigationBar: day.exercises.isEmpty
+          ? null
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
+                  // The workout feature starts the session from its route.
+                  onPressed: () => context.go(AppRoutes.workoutStart(day.id)),
+                  icon: const Icon(Icons.play_arrow),
+                  label: const Text(RoutineStrings.startWorkout),
+                ),
+              ),
+            ),
     );
   }
 }

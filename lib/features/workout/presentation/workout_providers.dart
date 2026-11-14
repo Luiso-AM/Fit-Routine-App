@@ -1,0 +1,49 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+// Other features' repositories are injected through their providers; only
+// their domain interfaces are used here.
+import '../../exercises/data/exercise_data_providers.dart';
+import '../../exercises/domain/exercise.dart';
+import '../../routines/data/routine_data_providers.dart';
+import '../../routines/domain/routine.dart';
+import '../data/workout_data_providers.dart';
+import '../domain/exercise_performance.dart';
+import '../domain/workout_session.dart';
+
+part 'workout_providers.g.dart';
+
+/// The session in progress, or `null`.
+@riverpod
+Stream<WorkoutSession?> activeWorkout(Ref ref) =>
+    ref.watch(workoutRepositoryProvider).watchActive();
+
+/// Active exercises by id, to show the exercises a session references.
+@riverpod
+Stream<Map<String, Exercise>> workoutExerciseCatalog(Ref ref) => ref
+    .watch(exerciseRepositoryProvider)
+    .watchAll()
+    .map((all) => {for (final e in all) e.id: e});
+
+/// Routines to start a session from.
+@riverpod
+Stream<List<Routine>> workoutRoutines(Ref ref) =>
+    ref.watch(routineRepositoryProvider).watchAll();
+
+/// What was done the last time an exercise was trained, or `null`.
+@riverpod
+Future<ExercisePerformance?> lastPerformance(Ref ref, String exerciseId) async {
+  final last = await ref.watch(workoutRepositoryProvider).lastPerformances([
+    exerciseId,
+  ]);
+  return last[exerciseId];
+}
+
+/// Current UTC time, updated every second, for the session clock.
+@riverpod
+Stream<DateTime> clock(Ref ref) async* {
+  yield DateTime.now().toUtc();
+  yield* Stream.periodic(
+    const Duration(seconds: 1),
+    (_) => DateTime.now().toUtc(),
+  );
+}

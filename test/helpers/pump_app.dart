@@ -9,7 +9,11 @@ import 'package:app_entrenamiento/features/profile/domain/body_measurement.dart'
 import 'package:app_entrenamiento/features/profile/domain/body_weight_entry.dart';
 import 'package:app_entrenamiento/features/profile/domain/user_profile.dart';
 import 'package:app_entrenamiento/features/routines/data/routine_data_providers.dart';
+import 'package:app_entrenamiento/core/widgets/keep_screen_on.dart';
 import 'package:app_entrenamiento/features/routines/domain/routine.dart';
+import 'package:app_entrenamiento/features/workout/data/workout_data_providers.dart';
+import 'package:app_entrenamiento/features/workout/domain/workout_session.dart';
+import 'package:app_entrenamiento/features/workout/presentation/workout_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -17,6 +21,11 @@ import 'fake_body_metrics_repository.dart';
 import 'fake_exercise_repository.dart';
 import 'fake_profile_repository.dart';
 import 'fake_routine_repository.dart';
+import 'fake_screen_wake_lock.dart';
+import 'fake_workout_repository.dart';
+
+/// Fixed "now" of pumped apps: the clock never ticks in widget tests.
+final DateTime testNow = DateTime.utc(2026, 11, 14, 10);
 
 /// The fakes behind a pumped app, to inspect what the UI wrote.
 typedef PumpedApp = ({
@@ -24,6 +33,8 @@ typedef PumpedApp = ({
   FakeProfileRepository profile,
   FakeBodyMetricsRepository bodyMetrics,
   FakeRoutineRepository routines,
+  FakeWorkoutRepository workouts,
+  FakeScreenWakeLock wakeLock,
 });
 
 /// Pumps the whole app on a phone-sized screen (360x780 dp) with in-memory
@@ -39,6 +50,7 @@ Future<PumpedApp> pumpApp(
   List<BodyWeightEntry> weights = const [],
   List<BodyMeasurement> measurements = const [],
   List<Routine> routines = const [],
+  List<WorkoutSession> sessions = const [],
 }) async {
   tester.view
     ..physicalSize = const Size(1080, 2340)
@@ -57,6 +69,12 @@ Future<PumpedApp> pumpApp(
     routines: routines,
     exercises: exercises,
   );
+  final workoutRepository = FakeWorkoutRepository(
+    sessions: sessions,
+    routines: routineRepository,
+    clock: () => testNow,
+  );
+  final wakeLock = FakeScreenWakeLock();
   final container = ProviderContainer(
     overrides: [
       exerciseRepositoryProvider.overrideWithValue(
@@ -65,6 +83,9 @@ Future<PumpedApp> pumpApp(
       profileRepositoryProvider.overrideWithValue(profileRepository),
       bodyMetricsRepositoryProvider.overrideWithValue(bodyMetrics),
       routineRepositoryProvider.overrideWithValue(routineRepository),
+      workoutRepositoryProvider.overrideWithValue(workoutRepository),
+      screenWakeLockProvider.overrideWithValue(wakeLock),
+      clockProvider.overrideWith((ref) => Stream.value(testNow)),
     ],
   );
   addTearDown(container.dispose);
@@ -82,5 +103,7 @@ Future<PumpedApp> pumpApp(
     profile: profileRepository,
     bodyMetrics: bodyMetrics,
     routines: routineRepository,
+    workouts: workoutRepository,
+    wakeLock: wakeLock,
   );
 }

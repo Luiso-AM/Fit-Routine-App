@@ -20,6 +20,8 @@ import '../features/routines/presentation/screens/exercise_picker_screen.dart';
 import '../features/routines/presentation/screens/routine_day_screen.dart';
 import '../features/routines/presentation/screens/routine_detail_screen.dart';
 import '../features/routines/presentation/screens/routines_screen.dart';
+import '../features/workout/presentation/screens/start_workout_screen.dart';
+import '../features/workout/presentation/screens/workout_exercise_picker_screen.dart';
 import '../features/workout/presentation/workout_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -61,6 +63,19 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.workout,
                 builder: (context, state) => const WorkoutScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'add',
+                    builder: (context, state) =>
+                        const WorkoutExercisePickerScreen(),
+                  ),
+                  GoRoute(
+                    path: 'start/:dayId',
+                    builder: (context, state) => StartWorkoutScreen(
+                      routineDayId: state.pathParameters['dayId']!,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
