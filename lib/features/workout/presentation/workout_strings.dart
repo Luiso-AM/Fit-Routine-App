@@ -31,8 +31,8 @@ abstract final class WorkoutStrings {
   static const String continueWorkout = 'Continuar';
 
   static String resumeMessage(String name) =>
-      '$name sigue abierto y tus series están guardadas. '
-      '¿Quieres continuarlo?';
+      'Tu entrenamiento ($name) sigue en curso y tus series están '
+      'guardadas. ¿Quieres continuarlo?';
 
   // Session in progress.
   static const String paused = 'En pausa';
