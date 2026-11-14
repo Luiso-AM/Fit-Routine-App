@@ -16,7 +16,8 @@ import '../features/profile/presentation/screens/body_weight_history_screen.dart
 import '../features/profile/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_form_screen.dart';
 import '../features/progress/presentation/progress_screen.dart';
-import '../features/routines/presentation/routines_screen.dart';
+import '../features/routines/presentation/screens/routine_detail_screen.dart';
+import '../features/routines/presentation/screens/routines_screen.dart';
 import '../features/workout/presentation/workout_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -91,6 +92,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                         ],
                       ),
                     ],
+                  ),
+                  // Declared after 'exercises' so it is not read as an id.
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) => RoutineDetailScreen(
+                      routineId: state.pathParameters['id']!,
+                    ),
                   ),
                 ],
               ),

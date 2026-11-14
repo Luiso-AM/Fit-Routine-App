@@ -2,7 +2,7 @@ import 'package:app_entrenamiento/core/strings/app_strings.dart';
 import 'package:app_entrenamiento/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:app_entrenamiento/features/profile/presentation/profile_screen.dart';
 import 'package:app_entrenamiento/features/progress/presentation/progress_screen.dart';
-import 'package:app_entrenamiento/features/routines/presentation/routines_screen.dart';
+import 'package:app_entrenamiento/features/routines/presentation/screens/routines_screen.dart';
 import 'package:app_entrenamiento/features/workout/presentation/workout_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';

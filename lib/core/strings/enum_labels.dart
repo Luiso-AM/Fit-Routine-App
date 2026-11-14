@@ -5,6 +5,7 @@ import '../../features/exercises/domain/enums/muscle_group.dart';
 import '../../features/profile/domain/enums/experience_level.dart';
 import '../../features/profile/domain/enums/sex.dart';
 import '../../features/profile/domain/enums/training_goal.dart';
+import '../../features/routines/domain/enums/routine_template_type.dart';
 
 // Spanish labels for domain enums. They live in `core` because several
 // features (exercises, profile, routines, workout) display them.
@@ -76,5 +77,22 @@ extension TrainingGoalLabel on TrainingGoal {
     TrainingGoal.fatLoss => 'Perder grasa',
     TrainingGoal.recomposition => 'Recomposición corporal',
     TrainingGoal.maintenance => 'Mantenerme en forma',
+  };
+}
+
+extension RoutineTemplateTypeLabel on RoutineTemplateType {
+  String get label => switch (this) {
+    RoutineTemplateType.fullBody => 'Full Body',
+    RoutineTemplateType.upperLower => 'Upper / Lower',
+    RoutineTemplateType.pushPullLegs => 'Push / Pull / Legs',
+  };
+
+  String get description => switch (this) {
+    RoutineTemplateType.fullBody =>
+      'Todo el cuerpo en cada sesión. 3 días por semana.',
+    RoutineTemplateType.upperLower =>
+      'Tren superior e inferior (torso / pierna) alternados. 4 días.',
+    RoutineTemplateType.pushPullLegs =>
+      'Empuje, tirón y pierna. 3 días, o 6 repitiendo el ciclo.',
   };
 }

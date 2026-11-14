@@ -20,6 +20,15 @@ abstract final class AppRoutes {
   static String profileMeasurementEdit(String id) =>
       '$profileMeasurements/$id/edit';
 
+  // Routines tab.
+  static String routineDetail(String id) => '$routines/$id';
+
+  static String routineDay(String id, String dayId) =>
+      '$routines/$id/days/$dayId';
+
+  static String routineDayAddExercises(String id, String dayId) =>
+      '${routineDay(id, dayId)}/add';
+
   // Exercise library, nested in the routines tab.
   static const String exercises = '$routines/exercises';
   static const String exerciseNew = '$exercises/new';

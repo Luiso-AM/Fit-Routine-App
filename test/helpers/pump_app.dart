@@ -8,18 +8,22 @@ import 'package:app_entrenamiento/features/profile/data/profile_data_providers.d
 import 'package:app_entrenamiento/features/profile/domain/body_measurement.dart';
 import 'package:app_entrenamiento/features/profile/domain/body_weight_entry.dart';
 import 'package:app_entrenamiento/features/profile/domain/user_profile.dart';
+import 'package:app_entrenamiento/features/routines/data/routine_data_providers.dart';
+import 'package:app_entrenamiento/features/routines/domain/routine.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_body_metrics_repository.dart';
 import 'fake_exercise_repository.dart';
 import 'fake_profile_repository.dart';
+import 'fake_routine_repository.dart';
 
 /// The fakes behind a pumped app, to inspect what the UI wrote.
 typedef PumpedApp = ({
   ProviderContainer container,
   FakeProfileRepository profile,
   FakeBodyMetricsRepository bodyMetrics,
+  FakeRoutineRepository routines,
 });
 
 /// Pumps the whole app on a phone-sized screen (360x780 dp) with in-memory
@@ -34,6 +38,7 @@ Future<PumpedApp> pumpApp(
   UserProfile? profile = testProfile,
   List<BodyWeightEntry> weights = const [],
   List<BodyMeasurement> measurements = const [],
+  List<Routine> routines = const [],
 }) async {
   tester.view
     ..physicalSize = const Size(1080, 2340)
@@ -48,6 +53,10 @@ Future<PumpedApp> pumpApp(
     profile: profile,
     bodyMetrics: bodyMetrics,
   );
+  final routineRepository = FakeRoutineRepository(
+    routines: routines,
+    exercises: exercises,
+  );
   final container = ProviderContainer(
     overrides: [
       exerciseRepositoryProvider.overrideWithValue(
@@ -55,6 +64,7 @@ Future<PumpedApp> pumpApp(
       ),
       profileRepositoryProvider.overrideWithValue(profileRepository),
       bodyMetricsRepositoryProvider.overrideWithValue(bodyMetrics),
+      routineRepositoryProvider.overrideWithValue(routineRepository),
     ],
   );
   addTearDown(container.dispose);
@@ -71,5 +81,6 @@ Future<PumpedApp> pumpApp(
     container: container,
     profile: profileRepository,
     bodyMetrics: bodyMetrics,
+    routines: routineRepository,
   );
 }
