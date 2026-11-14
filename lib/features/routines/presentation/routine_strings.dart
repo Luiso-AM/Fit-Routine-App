@@ -72,6 +72,10 @@ abstract final class RoutineStrings {
   static const String seconds = 's';
   static const String remove = 'Quitar';
   static const String exerciseRemoved = 'Ejercicio quitado del día';
+  static const String removeExerciseTitle = '¿Quitar ejercicio?';
+  static const String removeExerciseMessage =
+      'Se quitará de este día junto con sus series, repeticiones, peso y '
+      'notas. Los entrenamientos que ya hiciste se conservan en el historial.';
 
   /// "3 × 10–12", or "3 × 10" when the range is a single value.
   static String setsAndReps(int sets, int min, int max) =>

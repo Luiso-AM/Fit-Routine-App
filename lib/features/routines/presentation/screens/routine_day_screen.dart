@@ -142,6 +142,14 @@ class _DayView extends ConsumerWidget {
           () => _repository(ref).updateExercise(planned.id, draft),
         );
       case ExerciseRemoveRequested():
+        final confirmed = await showConfirmDialog(
+          context,
+          title: RoutineStrings.removeExerciseTitle,
+          message: RoutineStrings.removeExerciseMessage,
+          confirmLabel: RoutineStrings.remove,
+          cancelLabel: RoutineStrings.cancel,
+        );
+        if (!confirmed || !context.mounted) return;
         final messenger = ScaffoldMessenger.of(context);
         final removed = await _guard(
           context,

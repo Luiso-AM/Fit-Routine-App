@@ -223,9 +223,8 @@ void main() {
     expect(_dayExercises(app).single.targetRepsMin, 10);
   });
 
-  testWidgets('given an exercise, when removed, then the day is empty', (
-    tester,
-  ) async {
+  testWidgets('given an exercise, when removal is confirmed, '
+      'then the day is empty', (tester) async {
     final app = await pumpApp(
       tester,
       location: _dayRoute,
@@ -234,11 +233,37 @@ void main() {
     );
 
     await _tap(tester, find.text(_bench.name));
-    await _tap(tester, find.text(RoutineStrings.remove));
+    await _tap(
+      tester,
+      find.widgetWithText(OutlinedButton, RoutineStrings.remove),
+    );
+    expect(find.text(RoutineStrings.removeExerciseTitle), findsOneWidget);
+    await _tap(tester, find.widgetWithText(TextButton, RoutineStrings.remove));
 
     expect(find.text(RoutineStrings.noExercisesInDay), findsOneWidget);
     expect(find.text(RoutineStrings.exerciseRemoved), findsOneWidget);
     expect(_dayExercises(app), isEmpty);
+  });
+
+  testWidgets('given an exercise, when removal is cancelled, '
+      'then it is kept with its targets', (tester) async {
+    final app = await pumpApp(
+      tester,
+      location: _dayRoute,
+      routines: [_routine()],
+      exercises: _exercises,
+    );
+
+    await _tap(tester, find.text(_bench.name));
+    await _tap(
+      tester,
+      find.widgetWithText(OutlinedButton, RoutineStrings.remove),
+    );
+    await _tap(tester, find.text(RoutineStrings.cancel));
+
+    expect(find.text(_bench.name), findsOneWidget);
+    expect(find.text(RoutineStrings.exerciseRemoved), findsNothing);
+    expect(_dayExercises(app), hasLength(1));
   });
 
   testWidgets('given two exercises, when the first is dragged below, '
