@@ -1,3 +1,4 @@
+import 'package:app_entrenamiento/core/strings/app_strings.dart';
 import 'package:app_entrenamiento/core/routing/app_routes.dart';
 import 'package:app_entrenamiento/core/units/weight_unit.dart';
 import 'package:app_entrenamiento/features/exercises/domain/enums/difficulty.dart';
@@ -134,7 +135,7 @@ void main() {
     // Clear the chest filter to reach back exercises.
     await _tap(tester, find.widgetWithText(FilterChip, 'Pecho'));
     await _tap(tester, find.text(_row.name));
-    await _tap(tester, find.text(RoutineStrings.addSelected(2)));
+    await _tap(tester, find.text(AppStrings.pickerAddSelected(2)));
 
     expect(find.byType(RoutineDayScreen), findsOneWidget);
     final exercises = _dayExercises(app);
@@ -159,7 +160,7 @@ void main() {
     await _tap(tester, find.text(RoutineStrings.addExercises));
 
     final button = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, RoutineStrings.addExercises),
+      find.widgetWithText(FilledButton, AppStrings.pickerTitle),
     );
     expect(button.onPressed, isNull);
   });

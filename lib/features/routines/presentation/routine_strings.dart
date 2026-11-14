@@ -83,14 +83,6 @@ abstract final class RoutineStrings {
 
   static String restValue(int seconds) => '$rest $seconds s';
 
-  // Exercise picker.
-  static const String searchHint = 'Buscar ejercicio';
-  static const String clearSearch = 'Borrar búsqueda';
-  static const String noResults = 'No hay ejercicios que coincidan.';
-
-  static String addSelected(int count) =>
-      count == 0 ? addExercises : 'Agregar ($count)';
-
   // Exercise targets validation.
   static const String required = 'Obligatorio.';
   static const String setsOutOfRange =
