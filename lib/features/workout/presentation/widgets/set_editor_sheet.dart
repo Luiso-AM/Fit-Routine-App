@@ -10,6 +10,7 @@ import '../../domain/set_values.dart';
 import '../../domain/workout_repository.dart';
 import '../../domain/workout_session.dart';
 import '../workout_strings.dart';
+import 'workout_widgets.dart';
 
 /// Edits one set with large +/− buttons or the keyboard. Every change is
 /// saved at once; there is no save button.
@@ -286,14 +287,16 @@ class _Stepper extends StatelessWidget {
         const SizedBox(height: 4),
         Row(
           children: [
-            IconButton.filledTonal(
+            IconButton.filled(
+              style: neutralIconButtonStyle(theme),
               constraints: buttonSize,
               tooltip: '${WorkoutStrings.decrease} $label',
               onPressed: onDecrease,
               icon: const Icon(Icons.remove),
             ),
             Expanded(child: child),
-            IconButton.filledTonal(
+            IconButton.filled(
+              style: neutralIconButtonStyle(theme),
               constraints: buttonSize,
               tooltip: '${WorkoutStrings.increase} $label',
               onPressed: onIncrease,

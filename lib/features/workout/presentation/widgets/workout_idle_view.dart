@@ -41,10 +41,8 @@ class WorkoutIdleView extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  FilledButton.tonalIcon(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(0, 48),
-                    ),
+                  FilledButton.icon(
+                    style: neutralButtonStyle(theme),
                     onPressed: () => startWorkout(context, ref),
                     icon: const Icon(Icons.play_arrow),
                     label: const Text(WorkoutStrings.startFreeSession),

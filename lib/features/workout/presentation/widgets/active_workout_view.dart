@@ -168,7 +168,8 @@ class ActiveWorkoutView extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             child: Row(
               children: [
-                IconButton.filledTonal(
+                IconButton.filled(
+                  style: neutralIconButtonStyle(theme),
                   constraints: const BoxConstraints.tightFor(
                     width: 52,
                     height: 52,
@@ -262,6 +263,7 @@ class _SessionHeader extends ConsumerWidget {
                     child: LinearProgressIndicator(
                       value: session.progress,
                       minHeight: 8,
+                      backgroundColor: theme.colorScheme.surfaceContainerHigh,
                     ),
                   ),
                 ),
