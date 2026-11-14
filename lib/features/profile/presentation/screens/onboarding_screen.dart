@@ -190,6 +190,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               const SizedBox(height: 24),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
+                // The default layout centers children narrower than the
+                // screen, such as the equipment chips; keep them left-aligned.
+                layoutBuilder: (current, previous) => Stack(
+                  alignment: Alignment.topLeft,
+                  children: [...previous, ?current],
+                ),
                 child: KeyedSubtree(key: ValueKey(_step), child: _content()),
               ),
             ],

@@ -101,6 +101,8 @@ void main() {
     await _next(tester);
     await _fillTraining(tester);
     await _next(tester);
+    // Every step is aligned with the page padding, not centered.
+    expect(tester.getTopLeft(find.text(ProfileStrings.equipment)).dx, 16);
     await _tap(tester, find.text(ProfileStrings.finish));
     expect(find.text(ProfileStrings.equipmentRequired), findsOneWidget);
     await _tap(tester, find.text('Mancuerna'));
