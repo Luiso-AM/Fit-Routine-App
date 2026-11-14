@@ -11,6 +11,7 @@ import '../features/exercises/presentation/screens/exercise_list_screen.dart';
 import '../features/profile/presentation/profile_providers.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/profile/presentation/screens/onboarding_screen.dart';
+import '../features/profile/presentation/screens/profile_form_screen.dart';
 import '../features/progress/presentation/progress_screen.dart';
 import '../features/routines/presentation/routines_screen.dart';
 import '../features/workout/presentation/workout_screen.dart';
@@ -105,6 +106,12 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutes.profile,
                 builder: (context, state) => const ProfileScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) => const ProfileFormScreen(),
+                  ),
+                ],
               ),
             ],
           ),

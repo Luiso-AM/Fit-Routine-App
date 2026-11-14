@@ -188,7 +188,7 @@ class _PersonalInfoFieldsState extends State<PersonalInfoFields> {
           initialPickerDate: DateTime.utc(today.year - 25, 1, 1),
           yearFirst: true,
           clearTooltip: ProfileStrings.clearDate,
-          helperText: age == null ? null : ProfileStrings.age(age),
+          helperText: age == null ? null : ProfileStrings.years(age),
           errorText: _error([ProfileValidationError.birthDateOutOfRange]),
           onChanged: (date) =>
               widget.onChanged(draft.copyWith(birthDate: date)),

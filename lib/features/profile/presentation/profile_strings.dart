@@ -40,7 +40,22 @@ abstract final class ProfileStrings {
   static const String kg = 'kg';
   static const String minutes = 'min';
 
-  static String age(int years) => '$years años';
+  static String years(int years) => '$years años';
+
+  // Profile screen and edit form.
+  static const String editProfile = 'Editar perfil';
+  static const String personalData = 'Datos personales';
+  static const String training = 'Entrenamiento';
+  static const String age = 'Edad';
+  static const String sex = 'Sexo';
+  static const String notSpecified = 'Sin indicar';
+  static const String save = 'Guardar';
+  static const String profileSaved = 'Perfil actualizado';
+  static const String loadError = 'No se pudo cargar el perfil.';
+
+  static String days(int days) => days == 1 ? '1 día' : '$days días';
+
+  static String durationMinutes(int minutes) => '$minutes min';
 
   static const String saveError = 'No se pudo guardar. Inténtalo de nuevo.';
 

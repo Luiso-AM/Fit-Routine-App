@@ -11,6 +11,9 @@ abstract final class AppRoutes {
   /// First-run profile creation, outside the tab shell.
   static const String onboarding = '/onboarding';
 
+  // Profile tab.
+  static const String profileEdit = '$profile/edit';
+
   // Exercise library, nested in the routines tab.
   static const String exercises = '$routines/exercises';
   static const String exerciseNew = '$exercises/new';
