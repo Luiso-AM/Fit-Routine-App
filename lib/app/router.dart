@@ -10,6 +10,9 @@ import '../features/exercises/presentation/screens/exercise_form_screen.dart';
 import '../features/exercises/presentation/screens/exercise_list_screen.dart';
 import '../features/profile/presentation/profile_providers.dart';
 import '../features/profile/presentation/profile_screen.dart';
+import '../features/profile/presentation/screens/body_measurement_form_screen.dart';
+import '../features/profile/presentation/screens/body_measurements_history_screen.dart';
+import '../features/profile/presentation/screens/body_weight_history_screen.dart';
 import '../features/profile/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_form_screen.dart';
 import '../features/progress/presentation/progress_screen.dart';
@@ -110,6 +113,29 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'edit',
                     builder: (context, state) => const ProfileFormScreen(),
+                  ),
+                  GoRoute(
+                    path: 'weight',
+                    builder: (context, state) =>
+                        const BodyWeightHistoryScreen(),
+                  ),
+                  GoRoute(
+                    path: 'measurements',
+                    builder: (context, state) =>
+                        const BodyMeasurementsHistoryScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'new',
+                        builder: (context, state) =>
+                            const BodyMeasurementFormScreen(),
+                      ),
+                      GoRoute(
+                        path: ':id/edit',
+                        builder: (context, state) => BodyMeasurementFormScreen(
+                          measurementId: state.pathParameters['id'],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

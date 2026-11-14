@@ -24,6 +24,14 @@ Future<void> _tapInForm(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
+/// Scrolls the screen's list until [text] is visible.
+Future<void> _scrollTo(WidgetTester tester, String text) =>
+    tester.scrollUntilVisible(
+      find.text(text),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+
 void main() {
   testWidgets('given a profile, when the profile tab opens, '
       'then its data is shown', (tester) async {
@@ -37,6 +45,7 @@ void main() {
     expect(find.text('Mujer'), findsOneWidget);
     expect(find.text('168.5 cm'), findsOneWidget);
     expect(find.text(ProfileStrings.notSpecified), findsOneWidget); // age
+    await _scrollTo(tester, 'Barra, Mancuerna');
     expect(find.text('4 días'), findsOneWidget);
     expect(find.text('60 min'), findsOneWidget);
     expect(find.text('Barra, Mancuerna'), findsOneWidget);
@@ -69,6 +78,7 @@ void main() {
 
     expect(find.byType(ProfileScreen), findsOneWidget);
     expect(find.text('Sam'), findsOneWidget);
+    await _scrollTo(tester, '5 días');
     expect(app.profile.profile!.daysPerWeek, 5);
     expect(find.text('5 días'), findsOneWidget);
     expect(find.text(ProfileStrings.profileSaved), findsOneWidget);

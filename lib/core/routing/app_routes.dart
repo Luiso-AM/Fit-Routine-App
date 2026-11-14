@@ -13,6 +13,12 @@ abstract final class AppRoutes {
 
   // Profile tab.
   static const String profileEdit = '$profile/edit';
+  static const String profileWeight = '$profile/weight';
+  static const String profileMeasurements = '$profile/measurements';
+  static const String profileMeasurementNew = '$profileMeasurements/new';
+
+  static String profileMeasurementEdit(String id) =>
+      '$profileMeasurements/$id/edit';
 
   // Exercise library, nested in the routines tab.
   static const String exercises = '$routines/exercises';

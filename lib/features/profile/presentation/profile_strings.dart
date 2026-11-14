@@ -59,6 +59,46 @@ abstract final class ProfileStrings {
 
   static const String saveError = 'No se pudo guardar. Inténtalo de nuevo.';
 
+  // Body weight.
+  static const String logWeight = 'Registrar peso';
+  static const String editWeight = 'Editar peso';
+  static const String weightHistory = 'Historial de peso';
+  static const String history = 'Historial';
+  static const String date = 'Fecha';
+  static const String noWeights = 'Aún no hay registros de peso.';
+  static const String noRecords = 'Sin registros';
+  static const String weightSaved = 'Peso guardado';
+  static const String replacesEntry =
+      'Ya hay un registro ese día. Se reemplazará.';
+
+  static String recordedOn(String date) => 'Registrado el $date';
+
+  // Body measurements.
+  static const String measurements = 'Medidas corporales';
+  static const String logMeasurements = 'Registrar medidas';
+  static const String editMeasurements = 'Editar medidas';
+  static const String measurementsHint =
+      'Completa solo las medidas que quieras registrar.';
+  static const String noMeasurements = 'Aún no hay medidas registradas.';
+  static const String measurementsSaved = 'Medidas guardadas';
+  static const String measurementNotFound =
+      'Este registro no existe o fue eliminado.';
+  static const String waist = 'Cintura';
+  static const String chest = 'Pecho';
+  static const String arm = 'Brazo';
+  static const String leg = 'Pierna';
+  static const String hip = 'Cadera';
+  static const String bodyFat = 'Grasa corporal';
+  static const String percent = '%';
+
+  // Deleting body entries.
+  static const String delete = 'Eliminar';
+  static const String cancel = 'Cancelar';
+  static const String deleteEntryTitle = '¿Eliminar registro?';
+  static const String deleteEntryMessage = 'Esta acción no se puede deshacer.';
+  static const String entryDeleted = 'Registro eliminado';
+  static const String deleteError = 'No se pudo eliminar. Inténtalo de nuevo.';
+
   // Profile validation.
   static const String aliasRequired = 'Escribe tu nombre o alias.';
   static const String aliasTooLong =
