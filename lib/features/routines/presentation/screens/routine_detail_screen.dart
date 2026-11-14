@@ -276,6 +276,8 @@ class _DayListState extends State<_DayList> {
                 index: i,
                 catalog: widget.catalog,
                 onEdit: () => widget.onEdit(day),
+                onOpen: () =>
+                    context.go(AppRoutes.routineDay(widget.routine.id, day.id)),
               ),
             ),
           );
@@ -291,12 +293,14 @@ class _DayCard extends StatelessWidget {
     required this.index,
     required this.catalog,
     required this.onEdit,
+    required this.onOpen,
   });
 
   final RoutineDay day;
   final int index;
   final Map<String, Exercise> catalog;
   final VoidCallback onEdit;
+  final VoidCallback onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -305,53 +309,56 @@ class _DayCard extends StatelessWidget {
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(4, 8, 4, 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ReorderableDragStartListener(
-              index: index,
-              child: Tooltip(
-                message: RoutineStrings.reorder,
-                child: SizedBox(
-                  width: 48,
-                  height: 48,
-                  child: Icon(
-                    Icons.drag_indicator,
-                    color: theme.colorScheme.onSurfaceVariant,
+      child: InkWell(
+        onTap: onOpen,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ReorderableDragStartListener(
+                index: index,
+                child: Tooltip(
+                  message: RoutineStrings.reorder,
+                  child: SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: Icon(
+                      Icons.drag_indicator,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(day.name, style: theme.textTheme.titleMedium),
-                    const SizedBox(height: 2),
-                    Text(
-                      daySubtitle(day),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(day.name, style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 2),
+                      Text(
+                        daySubtitle(day),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                    if (muscles.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      MuscleChips(muscles: muscles),
+                      if (muscles.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        MuscleChips(muscles: muscles),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-            IconButton(
-              tooltip: RoutineStrings.dayActions,
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: onEdit,
-            ),
-          ],
+              IconButton(
+                tooltip: RoutineStrings.dayActions,
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: onEdit,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -16,6 +16,8 @@ import '../features/profile/presentation/screens/body_weight_history_screen.dart
 import '../features/profile/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_form_screen.dart';
 import '../features/progress/presentation/progress_screen.dart';
+import '../features/routines/presentation/screens/exercise_picker_screen.dart';
+import '../features/routines/presentation/screens/routine_day_screen.dart';
 import '../features/routines/presentation/screens/routine_detail_screen.dart';
 import '../features/routines/presentation/screens/routines_screen.dart';
 import '../features/workout/presentation/workout_screen.dart';
@@ -99,6 +101,24 @@ final routerProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) => RoutineDetailScreen(
                       routineId: state.pathParameters['id']!,
                     ),
+                    routes: [
+                      GoRoute(
+                        path: 'days/:dayId',
+                        builder: (context, state) => RoutineDayScreen(
+                          routineId: state.pathParameters['id']!,
+                          dayId: state.pathParameters['dayId']!,
+                        ),
+                        routes: [
+                          GoRoute(
+                            path: 'add',
+                            builder: (context, state) => ExercisePickerScreen(
+                              routineId: state.pathParameters['id']!,
+                              dayId: state.pathParameters['dayId']!,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),

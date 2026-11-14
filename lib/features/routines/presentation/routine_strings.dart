@@ -58,6 +58,46 @@ abstract final class RoutineStrings {
     return '$base$_copySuffix';
   }
 
+  // Routine day.
+  static const String dayNotFound = 'Este día no existe o fue eliminado.';
+  static const String noExercisesInDay = 'Agrega ejercicios a este día.';
+  static const String addExercises = 'Agregar ejercicios';
+  static const String missingExercise = 'Ejercicio eliminado de la biblioteca';
+  static const String reorderExercises = 'Arrastra para reordenar';
+  static const String sets = 'Series';
+  static const String repsMin = 'Reps mín.';
+  static const String repsMax = 'Reps máx.';
+  static const String initialWeightOptional = 'Peso inicial (opcional)';
+  static const String rest = 'Descanso';
+  static const String seconds = 's';
+  static const String remove = 'Quitar';
+  static const String exerciseRemoved = 'Ejercicio quitado del día';
+
+  /// "3 × 10–12", or "3 × 10" when the range is a single value.
+  static String setsAndReps(int sets, int min, int max) =>
+      min == max ? '$sets × $min' : '$sets × $min–$max';
+
+  static String restValue(int seconds) => '$rest $seconds s';
+
+  // Exercise picker.
+  static const String searchHint = 'Buscar ejercicio';
+  static const String clearSearch = 'Borrar búsqueda';
+  static const String noResults = 'No hay ejercicios que coincidan.';
+
+  static String addSelected(int count) =>
+      count == 0 ? addExercises : 'Agregar ($count)';
+
+  // Exercise targets validation.
+  static const String required = 'Obligatorio.';
+  static const String setsOutOfRange =
+      'Entre $kMinTargetSets y $kMaxTargetSets.';
+  static const String repsOutOfRange =
+      'Entre $kMinTargetReps y $kMaxTargetReps.';
+  static const String repsRangeInverted =
+      'El mínimo no puede superar al máximo.';
+  static const String weightOutOfRange = 'Escribe un peso válido.';
+  static const String restOutOfRange = 'Entre 0 y $kMaxRestSeconds segundos.';
+
   // Validation.
   static const String nameRequired = 'Escribe un nombre.';
   static const String nameTooLong =
