@@ -30,6 +30,10 @@ class WorkoutSessions extends Table with EntityColumns {
 
   DateTimeColumn get pausedAt => dateTime().nullable()();
 
+  /// When the running rest timer ends. A point in time, not a countdown,
+  /// so it survives the app going to the background or being killed.
+  DateTimeColumn get restEndsAt => dateTime().nullable()();
+
   TextColumn get status => textEnum<SessionStatus>().withDefault(
     Constant(SessionStatus.inProgress.name),
   )();

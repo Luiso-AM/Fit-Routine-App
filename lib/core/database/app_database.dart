@@ -45,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   /// Bump on every schema change and add a step in [migration].
   /// Never drop the user's database to "fix" a migration.
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -58,6 +58,11 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(table, table.targetRepsMin);
         await m.addColumn(table, table.targetRepsMax);
         await m.addColumn(table, table.restSeconds);
+      },
+      from2To3: (m, schema) async {
+        // Sessions keep the end time of the running rest timer.
+        final table = schema.workoutSessions;
+        await m.addColumn(table, table.restEndsAt);
       },
     ),
     beforeOpen: (details) async {

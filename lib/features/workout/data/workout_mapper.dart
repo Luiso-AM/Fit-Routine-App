@@ -43,6 +43,7 @@ extension WorkoutSessionRowMapper on WorkoutSessionRow {
     endedAt: endedAt,
     pausedTotalSeconds: pausedTotalSeconds,
     pausedAt: pausedAt,
+    restEndsAt: restEndsAt,
     status: status,
     notes: notes,
     isDemo: isDemo,

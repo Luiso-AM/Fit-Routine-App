@@ -23,6 +23,9 @@ abstract class WorkoutSession with _$WorkoutSession {
 
     /// Set while the session is paused.
     DateTime? pausedAt,
+
+    /// When the running rest timer ends, if one was started.
+    DateTime? restEndsAt,
     @Default(SessionStatus.inProgress) SessionStatus status,
     @Default('') String notes,
     @Default(false) bool isDemo,

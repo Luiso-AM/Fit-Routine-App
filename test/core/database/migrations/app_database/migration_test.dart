@@ -9,6 +9,7 @@ import 'generated/schema.dart';
 
 import 'generated/schema_v1.dart' as v1;
 import 'generated/schema_v2.dart' as v2;
+import 'generated/schema_v3.dart' as v3;
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -102,6 +103,50 @@ void main() {
         expect(await newDb.select(newDb.workoutSessions).get(), hasLength(1));
         expect(await newDb.select(newDb.sessionExercises).get(), [
           expectedSessionExercise,
+        ]);
+      },
+    );
+  });
+
+  test('given a v2 database with a paused session, '
+      'when migrated to v3, '
+      'then the session is kept without a rest timer', () async {
+    const ts = '2026-01-10T10:00:00.000Z';
+    const oldSession = v2.WorkoutSessionsData(
+      id: 's1',
+      createdAt: ts,
+      updatedAt: ts,
+      startedAt: ts,
+      pausedTotalSeconds: 30,
+      pausedAt: ts,
+      status: 'inProgress',
+      notes: 'nota',
+      isDemo: 0,
+    );
+    const expectedSession = v3.WorkoutSessionsData(
+      id: 's1',
+      createdAt: ts,
+      updatedAt: ts,
+      startedAt: ts,
+      pausedTotalSeconds: 30,
+      pausedAt: ts,
+      status: 'inProgress',
+      notes: 'nota',
+      isDemo: 0,
+    );
+
+    await verifier.testWithDataIntegrity(
+      oldVersion: 2,
+      newVersion: 3,
+      createOld: v2.DatabaseAtV2.new,
+      createNew: v3.DatabaseAtV3.new,
+      openTestedDatabase: AppDatabase.new,
+      createItems: (batch, oldDb) {
+        batch.insert(oldDb.workoutSessions, oldSession);
+      },
+      validateItems: (newDb) async {
+        expect(await newDb.select(newDb.workoutSessions).get(), [
+          expectedSession,
         ]);
       },
     );

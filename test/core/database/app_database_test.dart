@@ -152,8 +152,8 @@ void main() {
       },
     );
 
-    test('given the app database, then the schema version is 2', () {
-      expect(db.schemaVersion, 2);
+    test('given the app database, then the schema version is 3', () {
+      expect(db.schemaVersion, 3);
     });
   });
 

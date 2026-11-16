@@ -1073,8 +1073,334 @@ i1.GeneratedColumn<String> _column_63(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NULL',
     );
+
+final class Schema3 extends i0.VersionedSchema {
+  Schema3({required super.database}) : super(version: 3);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    userProfile,
+    bodyWeightEntries,
+    bodyMeasurements,
+    exercises,
+    routines,
+    routineDays,
+    routineExercises,
+    workoutSessions,
+    sessionExercises,
+    setEntries,
+    idxBodyWeightEntriesDate,
+    idxBodyMeasurementsDate,
+    idxExercisesPrimaryMuscle,
+    idxRoutineDaysRoutine,
+    idxRoutineExercisesDay,
+    idxWorkoutSessionsStatus,
+    idxWorkoutSessionsStartedAt,
+    idxWorkoutSessionsRoutineDay,
+    idxSessionExercisesSession,
+    idxSessionExercisesExercise,
+    idxSetEntriesSessionExercise,
+  ];
+  late final Shape0 userProfile = Shape0(
+    source: i0.VersionedTable(
+      entityName: 'user_profile',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_3,
+        _column_4,
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_9,
+        _column_10,
+        _column_11,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape1 bodyWeightEntries = Shape1(
+    source: i0.VersionedTable(
+      entityName: 'body_weight_entries',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_0, _column_1, _column_2, _column_12, _column_13],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape2 bodyMeasurements = Shape2(
+    source: i0.VersionedTable(
+      entityName: 'body_measurements',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_12,
+        _column_14,
+        _column_15,
+        _column_16,
+        _column_17,
+        _column_18,
+        _column_19,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape3 exercises = Shape3(
+    source: i0.VersionedTable(
+      entityName: 'exercises',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_20,
+        _column_21,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_25,
+        _column_26,
+        _column_27,
+        _column_28,
+        _column_29,
+        _column_30,
+        _column_31,
+        _column_32,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape4 routines = Shape4(
+    source: i0.VersionedTable(
+      entityName: 'routines',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_20,
+        _column_21,
+        _column_33,
+        _column_34,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape5 routineDays = Shape5(
+    source: i0.VersionedTable(
+      entityName: 'routine_days',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_35,
+        _column_21,
+        _column_36,
+        _column_37,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape6 routineExercises = Shape6(
+    source: i0.VersionedTable(
+      entityName: 'routine_exercises',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_38,
+        _column_39,
+        _column_36,
+        _column_40,
+        _column_41,
+        _column_42,
+        _column_43,
+        _column_44,
+        _column_33,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape10 workoutSessions = Shape10(
+    source: i0.VersionedTable(
+      entityName: 'workout_sessions',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_45,
+        _column_46,
+        _column_47,
+        _column_48,
+        _column_49,
+        _column_64,
+        _column_50,
+        _column_33,
+        _column_51,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape8 sessionExercises = Shape8(
+    source: i0.VersionedTable(
+      entityName: 'session_exercises',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_52,
+        _column_39,
+        _column_36,
+        _column_53,
+        _column_54,
+        _column_55,
+        _column_56,
+        _column_33,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape9 setEntries = Shape9(
+    source: i0.VersionedTable(
+      entityName: 'set_entries',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_0,
+        _column_1,
+        _column_2,
+        _column_57,
+        _column_58,
+        _column_59,
+        _column_60,
+        _column_61,
+        _column_62,
+        _column_63,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Index idxBodyWeightEntriesDate = i1.Index(
+    'idx_body_weight_entries_date',
+    'CREATE INDEX idx_body_weight_entries_date ON body_weight_entries (date)',
+  );
+  final i1.Index idxBodyMeasurementsDate = i1.Index(
+    'idx_body_measurements_date',
+    'CREATE INDEX idx_body_measurements_date ON body_measurements (date)',
+  );
+  final i1.Index idxExercisesPrimaryMuscle = i1.Index(
+    'idx_exercises_primary_muscle',
+    'CREATE INDEX idx_exercises_primary_muscle ON exercises (primary_muscle)',
+  );
+  final i1.Index idxRoutineDaysRoutine = i1.Index(
+    'idx_routine_days_routine',
+    'CREATE INDEX idx_routine_days_routine ON routine_days (routine_id)',
+  );
+  final i1.Index idxRoutineExercisesDay = i1.Index(
+    'idx_routine_exercises_day',
+    'CREATE INDEX idx_routine_exercises_day ON routine_exercises (routine_day_id)',
+  );
+  final i1.Index idxWorkoutSessionsStatus = i1.Index(
+    'idx_workout_sessions_status',
+    'CREATE INDEX idx_workout_sessions_status ON workout_sessions (status)',
+  );
+  final i1.Index idxWorkoutSessionsStartedAt = i1.Index(
+    'idx_workout_sessions_started_at',
+    'CREATE INDEX idx_workout_sessions_started_at ON workout_sessions (started_at)',
+  );
+  final i1.Index idxWorkoutSessionsRoutineDay = i1.Index(
+    'idx_workout_sessions_routine_day',
+    'CREATE INDEX idx_workout_sessions_routine_day ON workout_sessions (routine_day_id)',
+  );
+  final i1.Index idxSessionExercisesSession = i1.Index(
+    'idx_session_exercises_session',
+    'CREATE INDEX idx_session_exercises_session ON session_exercises (session_id)',
+  );
+  final i1.Index idxSessionExercisesExercise = i1.Index(
+    'idx_session_exercises_exercise',
+    'CREATE INDEX idx_session_exercises_exercise ON session_exercises (exercise_id)',
+  );
+  final i1.Index idxSetEntriesSessionExercise = i1.Index(
+    'idx_set_entries_session_exercise',
+    'CREATE INDEX idx_set_entries_session_exercise ON set_entries (session_exercise_id)',
+  );
+}
+
+class Shape10 extends i0.VersionedTable {
+  Shape10({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<String> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get createdAt =>
+      columnsByName['created_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get updatedAt =>
+      columnsByName['updated_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get routineDayId =>
+      columnsByName['routine_day_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get startedAt =>
+      columnsByName['started_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get endedAt =>
+      columnsByName['ended_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get pausedTotalSeconds =>
+      columnsByName['paused_total_seconds']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get pausedAt =>
+      columnsByName['paused_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get restEndsAt =>
+      columnsByName['rest_ends_at']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get status =>
+      columnsByName['status']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get notes =>
+      columnsByName['notes']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get isDemo =>
+      columnsByName['is_demo']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<String> _column_64(String aliasedName) =>
+    i1.GeneratedColumn<String>(
+      'rest_ends_at',
+      aliasedName,
+      true,
+      type: i1.DriftSqlType.string,
+      $customConstraints: 'NULL',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
+  required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -1083,6 +1409,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from1To2(migrator, schema);
         return 2;
+      case 2:
+        final schema = Schema3(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from2To3(migrator, schema);
+        return 3;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -1091,6 +1422,7 @@ i0.MigrationStepWithVersion migrationSteps({
 
 i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
+  required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
 }) => i0.VersionedSchema.stepByStepHelper(
-  step: migrationSteps(from1To2: from1To2),
+  step: migrationSteps(from1To2: from1To2, from2To3: from2To3),
 );
