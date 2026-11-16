@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../core/strings/app_strings.dart';
+import '../features/workout/presentation/workout_providers.dart';
 import 'router.dart';
 import 'theme/app_theme.dart';
 
@@ -12,6 +13,7 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(restNotificationSyncProvider);
     return MaterialApp.router(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,

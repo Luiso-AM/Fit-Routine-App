@@ -10,8 +10,12 @@ import 'rest_notification_strings.dart';
 /// for it. Times are scheduled in UTC: a rest is a point in time, so no
 /// time zone database is needed.
 class LocalRestNotifier implements RestNotifier {
-  LocalRestNotifier([FlutterLocalNotificationsPlugin? plugin])
-    : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
+  /// [clock] returns the current UTC time; tests can pass a fixed one.
+  LocalRestNotifier({
+    FlutterLocalNotificationsPlugin? plugin,
+    DateTime Function()? clock,
+  }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin(),
+       _now = clock ?? (() => DateTime.now().toUtc());
 
   /// The rest notification is unique: scheduling one replaces the last.
   static const int notificationId = 1001;
@@ -30,6 +34,7 @@ class LocalRestNotifier implements RestNotifier {
   );
 
   final FlutterLocalNotificationsPlugin _plugin;
+  final DateTime Function() _now;
   Future<void>? _ready;
 
   /// A failed initialization is retried on the next call.
@@ -80,10 +85,12 @@ class LocalRestNotifier implements RestNotifier {
         : AndroidScheduleMode.inexactAllowWhileIdle;
   }
 
+  /// A rest that is already over only cancels the last notification.
   @override
   Future<void> schedule(DateTime endsAt) async {
     await _ensureReady();
     await _plugin.cancel(id: notificationId);
+    if (!endsAt.isAfter(_now())) return;
     await _plugin.zonedSchedule(
       id: notificationId,
       title: RestNotificationStrings.title,

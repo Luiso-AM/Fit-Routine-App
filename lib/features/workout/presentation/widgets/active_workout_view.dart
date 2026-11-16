@@ -12,6 +12,7 @@ import '../../domain/workout_session.dart';
 import '../workout_actions.dart';
 import '../workout_providers.dart';
 import '../workout_strings.dart';
+import 'rest_timer_bar.dart';
 import 'session_exercise_card.dart';
 import 'workout_widgets.dart';
 
@@ -166,40 +167,48 @@ class ActiveWorkoutView extends ConsumerWidget {
         bottomNavigationBar: SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton.filled(
-                  style: neutralIconButtonStyle(theme),
-                  constraints: const BoxConstraints.tightFor(
-                    width: 52,
-                    height: 52,
-                  ),
-                  tooltip: session.isPaused
-                      ? WorkoutStrings.resume
-                      : WorkoutStrings.pause,
-                  onPressed: () => _togglePause(context, ref),
-                  icon: Icon(session.isPaused ? Icons.play_arrow : Icons.pause),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(0, 52),
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                RestTimerBar(session: session),
+                Row(
+                  children: [
+                    IconButton.filled(
+                      style: neutralIconButtonStyle(theme),
+                      constraints: const BoxConstraints.tightFor(
+                        width: 52,
+                        height: 52,
+                      ),
+                      tooltip: session.isPaused
+                          ? WorkoutStrings.resume
+                          : WorkoutStrings.pause,
+                      onPressed: () => _togglePause(context, ref),
+                      icon: Icon(
+                        session.isPaused ? Icons.play_arrow : Icons.pause,
+                      ),
                     ),
-                    onPressed: () => _addExercises(context, ref),
-                    child: const Text(WorkoutStrings.addExercise),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(0, 52),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(0, 52),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        onPressed: () => _addExercises(context, ref),
+                        child: const Text(WorkoutStrings.addExercise),
+                      ),
                     ),
-                    onPressed: () => _finish(context, ref),
-                    child: const Text(WorkoutStrings.finish),
-                  ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(0, 52),
+                        ),
+                        onPressed: () => _finish(context, ref),
+                        child: const Text(WorkoutStrings.finish),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

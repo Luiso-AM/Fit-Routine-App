@@ -229,6 +229,71 @@ final class LastPerformanceFamily extends $Family
   String toString() => r'lastPerformanceProvider';
 }
 
+/// Keeps the rest notification in step with the active session: it is
+/// scheduled for the end of each rest and cancelled when the rest is
+/// skipped or the session pauses or ends. Watched by the app root so it
+/// runs on every screen.
+///
+/// Nothing is cancelled until a rest has been seen, so the plugin (and its
+/// permission request) is not touched at launch.
+
+@ProviderFor(restNotificationSync)
+final restNotificationSyncProvider = RestNotificationSyncProvider._();
+
+/// Keeps the rest notification in step with the active session: it is
+/// scheduled for the end of each rest and cancelled when the rest is
+/// skipped or the session pauses or ends. Watched by the app root so it
+/// runs on every screen.
+///
+/// Nothing is cancelled until a rest has been seen, so the plugin (and its
+/// permission request) is not touched at launch.
+
+final class RestNotificationSyncProvider
+    extends $FunctionalProvider<void, void, void>
+    with $Provider<void> {
+  /// Keeps the rest notification in step with the active session: it is
+  /// scheduled for the end of each rest and cancelled when the rest is
+  /// skipped or the session pauses or ends. Watched by the app root so it
+  /// runs on every screen.
+  ///
+  /// Nothing is cancelled until a rest has been seen, so the plugin (and its
+  /// permission request) is not touched at launch.
+  RestNotificationSyncProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'restNotificationSyncProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$restNotificationSyncHash();
+
+  @$internal
+  @override
+  $ProviderElement<void> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  void create(Ref ref) {
+    return restNotificationSync(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
+String _$restNotificationSyncHash() =>
+    r'5fd5f6942816656d6dbcb19a5474462cbc27fb2e';
+
 /// Current UTC time, updated every second, for the session clock.
 
 @ProviderFor(clock)

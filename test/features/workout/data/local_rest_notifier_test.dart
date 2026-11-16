@@ -25,7 +25,10 @@ void main() {
   setUp(() {
     plugin = _MockPlugin();
     android = _MockAndroid();
-    notifier = LocalRestNotifier(plugin);
+    notifier = LocalRestNotifier(
+      plugin: plugin,
+      clock: () => endsAt.subtract(const Duration(seconds: 90)),
+    );
 
     when(() => plugin.initialize(settings: any(named: 'settings')))
         .thenAnswer((_) async => true);
@@ -110,6 +113,25 @@ void main() {
     await notifier.schedule(endsAt);
 
     verify(() => plugin.initialize(settings: any(named: 'settings'))).called(2);
+  });
+
+  test('given a rest that is already over, when scheduled, '
+      'then the last notification is cancelled and none is set', () async {
+    notifier = LocalRestNotifier(plugin: plugin, clock: () => endsAt);
+
+    await notifier.schedule(endsAt);
+
+    verify(() => plugin.cancel(id: LocalRestNotifier.notificationId)).called(1);
+    verifyNever(
+      () => plugin.zonedSchedule(
+        id: any(named: 'id'),
+        title: any(named: 'title'),
+        body: any(named: 'body'),
+        scheduledDate: any(named: 'scheduledDate'),
+        notificationDetails: any(named: 'notificationDetails'),
+        androidScheduleMode: any(named: 'androidScheduleMode'),
+      ),
+    );
   });
 
   test('given a scheduled rest, when cancelled, '

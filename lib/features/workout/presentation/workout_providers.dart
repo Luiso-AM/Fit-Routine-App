@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // Other features' repositories are injected through their providers; only
@@ -36,6 +38,28 @@ Future<ExercisePerformance?> lastPerformance(Ref ref, String exerciseId) async {
     exerciseId,
   ]);
   return last[exerciseId];
+}
+
+/// Keeps the rest notification in step with the active session: it is
+/// scheduled for the end of each rest and cancelled when the rest is
+/// skipped or the session pauses or ends. Watched by the app root so it
+/// runs on every screen.
+///
+/// Nothing is cancelled until a rest has been seen, so the plugin (and its
+/// permission request) is not touched at launch.
+@Riverpod(keepAlive: true)
+void restNotificationSync(Ref ref) {
+  final notifier = ref.watch(restNotificationsProvider);
+  DateTime? synced;
+  ref.listen(activeWorkoutProvider, (_, next) {
+    if (!next.hasValue) return;
+    final endsAt = next.value?.restEndsAt;
+    if (endsAt == synced) return;
+    synced = endsAt;
+    final sync = endsAt == null ? notifier.cancel() : notifier.schedule(endsAt);
+    // The timer on screen still works without the notification.
+    unawaited(sync.catchError((Object _) {}));
+  }, fireImmediately: true);
 }
 
 /// Current UTC time, updated every second, for the session clock.

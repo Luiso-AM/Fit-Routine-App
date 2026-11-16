@@ -62,28 +62,28 @@ String _$workoutRepositoryHash() => r'f96937fc2789db7d85f044ba4abf770e34d1fef3';
 
 /// Notifies the end of a rest through its domain interface.
 
-@ProviderFor(restNotifier)
-final restProvider = RestNotifierProvider._();
+@ProviderFor(restNotifications)
+final restNotificationsProvider = RestNotificationsProvider._();
 
 /// Notifies the end of a rest through its domain interface.
 
-final class RestNotifierProvider
+final class RestNotificationsProvider
     extends $FunctionalProvider<RestNotifier, RestNotifier, RestNotifier>
     with $Provider<RestNotifier> {
   /// Notifies the end of a rest through its domain interface.
-  RestNotifierProvider._()
+  RestNotificationsProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'restProvider',
+        name: r'restNotificationsProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$restNotifierHash();
+  String debugGetCreateSourceHash() => _$restNotificationsHash();
 
   @$internal
   @override
@@ -92,7 +92,7 @@ final class RestNotifierProvider
 
   @override
   RestNotifier create(Ref ref) {
-    return restNotifier(ref);
+    return restNotifications(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -104,4 +104,4 @@ final class RestNotifierProvider
   }
 }
 
-String _$restNotifierHash() => r'da8402541ffbebbbc0623421336e6adbb09dc3b4';
+String _$restNotificationsHash() => r'13f3574101cbf3c52b8b7ff782e8bce22b46a279';

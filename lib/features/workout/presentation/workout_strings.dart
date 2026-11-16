@@ -50,6 +50,14 @@ abstract final class WorkoutStrings {
   static String setsProgress(int completed, int total) =>
       '$completed/$total series';
 
+  // Rest timer.
+  static const String rest = 'Descanso';
+  static const String restLess = '−15 s';
+  static const String restMore = '+15 s';
+  static const String restLessTooltip = 'Restar 15 segundos';
+  static const String restMoreTooltip = 'Sumar 15 segundos';
+  static const String skipRest = 'Saltar';
+
   // Exercise card.
   static const String missingExercise = 'Ejercicio eliminado de la biblioteca';
   static const String lastTime = 'Última vez';

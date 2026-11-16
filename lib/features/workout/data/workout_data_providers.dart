@@ -15,4 +15,4 @@ WorkoutRepository workoutRepository(Ref ref) =>
 
 /// Notifies the end of a rest through its domain interface.
 @Riverpod(keepAlive: true)
-RestNotifier restNotifier(Ref ref) => LocalRestNotifier();
+RestNotifier restNotifications(Ref ref) => LocalRestNotifier();

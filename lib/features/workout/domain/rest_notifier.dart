@@ -2,7 +2,8 @@
 /// or was closed.
 abstract interface class RestNotifier {
   /// Shows a notification at [endsAt], replacing any one already
-  /// scheduled. Asks for permission the first time if needed.
+  /// scheduled. Asks for permission the first time if needed. A time
+  /// already past only cancels the scheduled one.
   Future<void> schedule(DateTime endsAt);
 
   /// Cancels the scheduled notification, if any.

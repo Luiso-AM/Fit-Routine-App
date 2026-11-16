@@ -16,6 +16,7 @@ import 'package:app_entrenamiento/features/workout/domain/workout_session.dart';
 import 'package:app_entrenamiento/features/workout/presentation/workout_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'fake_body_metrics_repository.dart';
 import 'fake_exercise_repository.dart';
@@ -23,6 +24,7 @@ import 'fake_profile_repository.dart';
 import 'fake_routine_repository.dart';
 import 'fake_screen_wake_lock.dart';
 import 'fake_workout_repository.dart';
+import 'mock_rest_notifier.dart';
 
 /// Fixed "now" of pumped apps: the clock never ticks in widget tests.
 final DateTime testNow = DateTime.utc(2026, 11, 14, 10);
@@ -35,6 +37,7 @@ typedef PumpedApp = ({
   FakeRoutineRepository routines,
   FakeWorkoutRepository workouts,
   FakeScreenWakeLock wakeLock,
+  MockRestNotifier restNotifier,
 });
 
 /// Pumps the whole app on a phone-sized screen (360x780 dp) with in-memory
@@ -75,6 +78,8 @@ Future<PumpedApp> pumpApp(
     clock: () => testNow,
   );
   final wakeLock = FakeScreenWakeLock();
+  registerFallbackValue(testNow);
+  final restNotifier = MockRestNotifier();
   final container = ProviderContainer(
     overrides: [
       exerciseRepositoryProvider.overrideWithValue(
@@ -85,6 +90,7 @@ Future<PumpedApp> pumpApp(
       routineRepositoryProvider.overrideWithValue(routineRepository),
       workoutRepositoryProvider.overrideWithValue(workoutRepository),
       screenWakeLockProvider.overrideWithValue(wakeLock),
+      restNotificationsProvider.overrideWithValue(restNotifier),
       clockProvider.overrideWith((ref) => Stream.value(testNow)),
     ],
   );
@@ -105,5 +111,6 @@ Future<PumpedApp> pumpApp(
     routines: routineRepository,
     workouts: workoutRepository,
     wakeLock: wakeLock,
+    restNotifier: restNotifier,
   );
 }
