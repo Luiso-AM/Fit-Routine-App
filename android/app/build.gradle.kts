@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "com.luiso_am.app_entrenamiento"
-    compileSdk = flutter.compileSdkVersion
+    // flutter_local_notifications 23 (and androidx.core 1.19) need API 37.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
