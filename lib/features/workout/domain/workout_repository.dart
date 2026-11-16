@@ -42,23 +42,40 @@ abstract interface class WorkoutRepository {
   Future<void> updateSet(String setId, SetValues values);
 
   /// Marks a set as completed or pending. Completing a set prefills the
-  /// next pending set with its weight and reps.
+  /// next pending set with its weight and reps and, unless the session is
+  /// paused, starts the rest timer with the exercise's rest. Marking it
+  /// pending leaves the rest timer as it is.
   ///
   /// Throws [WorkoutNotFoundException].
   Future<void> setCompleted(String setId, {required bool completed});
 
+  /// Moves the end of the running rest by [delta]. A rest that would be
+  /// over by now ends. Does nothing if no rest is running.
+  ///
+  /// Throws [WorkoutNotFoundException] or [SessionNotInProgressException].
+  Future<void> adjustRest(String sessionId, Duration delta);
+
+  /// Ends the running rest, if any.
+  ///
+  /// Throws [WorkoutNotFoundException] or [SessionNotInProgressException].
+  Future<void> skipRest(String sessionId);
+
+  /// Pausing also ends the running rest, if any.
+  ///
   /// Throws [WorkoutNotFoundException] or [SessionNotInProgressException].
   Future<void> pause(String sessionId);
 
   /// Throws [WorkoutNotFoundException] or [SessionNotInProgressException].
   Future<void> resume(String sessionId);
 
-  /// Ends the session and keeps it in history. A running pause ends too.
+  /// Ends the session and keeps it in history. A running pause or rest
+  /// ends too.
   ///
   /// Throws [WorkoutNotFoundException] or [SessionNotInProgressException].
   Future<void> finish(String sessionId);
 
-  /// Ends the session and leaves it out of history and statistics.
+  /// Ends the session and leaves it out of history and statistics. A
+  /// running pause or rest ends too.
   ///
   /// Throws [WorkoutNotFoundException] or [SessionNotInProgressException].
   Future<void> discard(String sessionId);

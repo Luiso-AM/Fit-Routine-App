@@ -3,6 +3,7 @@ import 'package:app_entrenamiento/features/routines/domain/routine.dart';
 import 'package:app_entrenamiento/features/routines/domain/routine_drafts.dart';
 import 'package:app_entrenamiento/features/workout/domain/enums/session_status.dart';
 import 'package:app_entrenamiento/features/workout/domain/exercise_performance.dart';
+import 'package:app_entrenamiento/features/workout/domain/rest_timer.dart';
 import 'package:app_entrenamiento/features/workout/domain/set_prefill.dart';
 import 'package:app_entrenamiento/features/workout/domain/set_values.dart';
 import 'package:app_entrenamiento/features/workout/domain/workout_repository.dart';
@@ -252,6 +253,14 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
       isCompleted: completed,
       completedAt: completed ? _now() : null,
     );
+    final session = _sessions[s];
+    if (completed && session.isInProgress && !session.isPaused) {
+      final endsAt = RestTimer.endAfter(
+        session.exercises[e].restSeconds,
+        _now(),
+      );
+      if (endsAt != null) _sessions[s] = session.copyWith(restEndsAt: endsAt);
+    }
     if (completed) {
       final next = setToPrefillAfter(sets, set);
       if (next != null) {
@@ -273,10 +282,30 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
   }
 
   @override
+  Future<void> adjustRest(String sessionId, Duration delta) async {
+    final s = _inProgressIndex(sessionId);
+    final endsAt = _sessions[s].restEndsAt;
+    final now = _now();
+    if (!RestTimer.isRunning(endsAt, now)) return;
+    _sessions[s] = _sessions[s].copyWith(
+      restEndsAt: RestTimer.adjust(endsAt!, delta, now),
+    );
+    notifyChanged();
+  }
+
+  @override
+  Future<void> skipRest(String sessionId) async {
+    final s = _inProgressIndex(sessionId);
+    if (_sessions[s].restEndsAt == null) return;
+    _sessions[s] = _sessions[s].copyWith(restEndsAt: null);
+    notifyChanged();
+  }
+
+  @override
   Future<void> pause(String sessionId) async {
     final s = _inProgressIndex(sessionId);
     if (_sessions[s].isPaused) return;
-    _sessions[s] = _sessions[s].copyWith(pausedAt: _now());
+    _sessions[s] = _sessions[s].copyWith(pausedAt: _now(), restEndsAt: null);
     notifyChanged();
   }
 
@@ -309,6 +338,7 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
       endedAt: now,
       pausedTotalSeconds: session.pausedSecondsUntil(now),
       pausedAt: null,
+      restEndsAt: null,
     );
     notifyChanged();
   }

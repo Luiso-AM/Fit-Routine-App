@@ -8,6 +8,7 @@ import 'package:app_entrenamiento/features/routines/domain/routine.dart';
 import 'package:app_entrenamiento/features/routines/domain/routine_drafts.dart';
 import 'package:app_entrenamiento/features/workout/data/drift_workout_repository.dart';
 import 'package:app_entrenamiento/features/workout/domain/enums/session_status.dart';
+import 'package:app_entrenamiento/features/workout/domain/rest_timer.dart';
 import 'package:app_entrenamiento/features/workout/domain/set_values.dart';
 import 'package:app_entrenamiento/features/workout/domain/workout_repository.dart';
 import 'package:app_entrenamiento/features/workout/domain/workout_session.dart';
@@ -486,6 +487,139 @@ void main() {
       );
       await repository.setCompleted(set.id, completed: true);
       await emitted;
+    });
+  });
+
+  group('rest timer', () {
+    /// Starts the "Push" day and returns the first set of the compound
+    /// exercise, whose rest is 150 s.
+    Future<SetEntry> startAndFirstSet() async {
+      final day = await createDay();
+      await repository.startFromRoutineDay(day.id);
+      return (await active()).exercises.first.sets.first;
+    }
+
+    test('given a session, when a set is completed, '
+        'then the rest ends after the exercise rest', () async {
+      final set = await startAndFirstSet();
+
+      await repository.setCompleted(set.id, completed: true);
+
+      expect(
+        (await active()).restEndsAt,
+        now.add(const Duration(seconds: 150)),
+      );
+    });
+
+    test('given a paused session, when a set is completed, '
+        'then no rest starts', () async {
+      final set = await startAndFirstSet();
+      await repository.pause((await active()).id);
+
+      await repository.setCompleted(set.id, completed: true);
+
+      expect((await active()).restEndsAt, isNull);
+    });
+
+    test('given a running rest, when the set is marked pending, '
+        'then the rest keeps running', () async {
+      final set = await startAndFirstSet();
+      await repository.setCompleted(set.id, completed: true);
+      final endsAt = (await active()).restEndsAt;
+
+      await repository.setCompleted(set.id, completed: false);
+
+      expect((await active()).restEndsAt, endsAt);
+    });
+
+    test('given a running rest, when adjusted by +15 s and −15 s, '
+        'then its end moves accordingly', () async {
+      final set = await startAndFirstSet();
+      await repository.setCompleted(set.id, completed: true);
+      final sessionId = (await active()).id;
+
+      await repository.adjustRest(sessionId, RestTimer.adjustStep);
+      expect(
+        (await active()).restEndsAt,
+        now.add(const Duration(seconds: 165)),
+      );
+
+      await repository.adjustRest(sessionId, -RestTimer.adjustStep);
+      expect(
+        (await active()).restEndsAt,
+        now.add(const Duration(seconds: 150)),
+      );
+    });
+
+    test('given 10 s of rest left, when reduced by 15 s, '
+        'then the rest ends', () async {
+      final set = await startAndFirstSet();
+      await repository.setCompleted(set.id, completed: true);
+      advance(const Duration(seconds: 140));
+
+      await repository.adjustRest((await active()).id, -RestTimer.adjustStep);
+
+      expect((await active()).restEndsAt, isNull);
+    });
+
+    test('given a rest that already ended, when adjusted, '
+        'then nothing changes', () async {
+      final set = await startAndFirstSet();
+      await repository.setCompleted(set.id, completed: true);
+      final endsAt = (await active()).restEndsAt;
+      advance(const Duration(seconds: 200));
+
+      await repository.adjustRest((await active()).id, RestTimer.adjustStep);
+
+      expect((await active()).restEndsAt, endsAt);
+    });
+
+    test('given a running rest, when skipped, then it ends', () async {
+      final set = await startAndFirstSet();
+      await repository.setCompleted(set.id, completed: true);
+
+      await repository.skipRest((await active()).id);
+
+      expect((await active()).restEndsAt, isNull);
+    });
+
+    test('given a running rest, when the session is paused, '
+        'then the rest ends', () async {
+      final set = await startAndFirstSet();
+      await repository.setCompleted(set.id, completed: true);
+
+      await repository.pause((await active()).id);
+
+      expect((await active()).restEndsAt, isNull);
+    });
+
+    test('given a running rest, when the session is finished, '
+        'then the stored session has no rest', () async {
+      final set = await startAndFirstSet();
+      await repository.setCompleted(set.id, completed: true);
+      final sessionId = (await active()).id;
+
+      await repository.finish(sessionId);
+
+      final row = await (db.select(
+        db.workoutSessions,
+      )..where((s) => s.id.equals(sessionId))).getSingle();
+      expect(row.restEndsAt, isNull);
+    });
+
+    test('given a finished session, when its rest is adjusted, '
+        'then it is rejected', () async {
+      final session = await repository.startFree();
+      await repository.finish(session.id);
+
+      expect(
+        () => repository.adjustRest(session.id, RestTimer.adjustStep),
+        throwsA(isA<SessionNotInProgressException>()),
+      );
+      expect(
+        () => repository.skipRest(session.id),
+        throwsA(isA<SessionNotInProgressException>()),
+      );
     });
   });
 }

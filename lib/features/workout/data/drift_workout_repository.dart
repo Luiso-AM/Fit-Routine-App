@@ -6,6 +6,7 @@ import '../../exercises/domain/exercise.dart';
 import '../../routines/domain/routine_drafts.dart';
 import '../domain/enums/session_status.dart';
 import '../domain/exercise_performance.dart';
+import '../domain/rest_timer.dart';
 import '../domain/set_prefill.dart';
 import '../domain/set_values.dart';
 import '../domain/workout_repository.dart';
@@ -222,6 +223,7 @@ class DriftWorkoutRepository implements WorkoutRepository {
       );
       if (!completed) return;
 
+      await _startRest(row.sessionExerciseId, now);
       final sets = [
         for (final s in await _dao.getSets([row.sessionExerciseId]))
           s.toDomain(),
@@ -238,6 +240,24 @@ class DriftWorkoutRepository implements WorkoutRepository {
       );
     });
   }
+
+  Future<void> _startRest(String sessionExerciseId, DateTime now) async {
+    final exercise = await _requireSessionExercise(sessionExerciseId);
+    final session = (await _requireSession(exercise.sessionId)).toDomain();
+    if (!session.isInProgress || session.isPaused) return;
+    final endsAt = RestTimer.endAfter(exercise.restSeconds, now);
+    if (endsAt == null) return;
+    await _setRestEnd(session.id, endsAt, now);
+  }
+
+  Future<void> _setRestEnd(String sessionId, DateTime? endsAt, DateTime now) =>
+      _dao.updateSession(
+        sessionId,
+        WorkoutSessionsCompanion(
+          restEndsAt: Value(endsAt),
+          updatedAt: Value(now),
+        ),
+      );
 
   Future<void> _insertSets(String sessionExerciseId, List<SetValues> values) =>
       _dao.batch(
@@ -267,13 +287,35 @@ class DriftWorkoutRepository implements WorkoutRepository {
   // Session lifecycle.
 
   @override
+  Future<void> adjustRest(String sessionId, Duration delta) {
+    return _db.transaction(() async {
+      final session = await _requireInProgress(sessionId);
+      final endsAt = session.restEndsAt;
+      final now = _now();
+      if (!RestTimer.isRunning(endsAt, now)) return;
+      await _setRestEnd(sessionId, RestTimer.adjust(endsAt!, delta, now), now);
+    });
+  }
+
+  @override
+  Future<void> skipRest(String sessionId) async {
+    final session = await _requireInProgress(sessionId);
+    if (session.restEndsAt == null) return;
+    await _setRestEnd(sessionId, null, _now());
+  }
+
+  @override
   Future<void> pause(String sessionId) async {
     final session = await _requireInProgress(sessionId);
     if (session.isPaused) return;
     final now = _now();
     await _dao.updateSession(
       sessionId,
-      WorkoutSessionsCompanion(pausedAt: Value(now), updatedAt: Value(now)),
+      WorkoutSessionsCompanion(
+        pausedAt: Value(now),
+        restEndsAt: const Value(null),
+        updatedAt: Value(now),
+      ),
     );
   }
 
@@ -310,6 +352,7 @@ class DriftWorkoutRepository implements WorkoutRepository {
         endedAt: Value(now),
         pausedTotalSeconds: Value(session.pausedSecondsUntil(now)),
         pausedAt: const Value(null),
+        restEndsAt: const Value(null),
         updatedAt: Value(now),
       ),
     );
