@@ -4,6 +4,7 @@ import 'package:app_entrenamiento/features/routines/domain/routine_drafts.dart';
 import 'package:app_entrenamiento/features/workout/domain/enums/session_status.dart';
 import 'package:app_entrenamiento/features/workout/domain/exercise_performance.dart';
 import 'package:app_entrenamiento/features/workout/domain/rest_timer.dart';
+import 'package:app_entrenamiento/features/workout/domain/session_start.dart';
 import 'package:app_entrenamiento/features/workout/domain/set_prefill.dart';
 import 'package:app_entrenamiento/features/workout/domain/set_values.dart';
 import 'package:app_entrenamiento/features/workout/domain/workout_repository.dart';
@@ -364,6 +365,19 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
   }
 
   // History.
+
+  @override
+  Stream<List<SessionStart>> watchFinishedStarts() => watchValue(
+    () => [
+      for (final s in _sessions)
+        if (s.status == SessionStatus.completed && !s.isDemo)
+          SessionStart(
+            sessionId: s.id,
+            routineDayId: s.routineDayId,
+            startedAt: s.startedAt,
+          ),
+    ]..sort((a, b) => b.startedAt.compareTo(a.startedAt)),
+  );
 
   @override
   Future<void> updateNotes(String sessionId, String notes) async {

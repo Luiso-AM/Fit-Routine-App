@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 
 import '../../../core/database/app_database.dart';
 import '../../../core/database/tables/table_mixins.dart';
@@ -7,6 +8,7 @@ import '../../routines/domain/routine_drafts.dart';
 import '../domain/enums/session_status.dart';
 import '../domain/exercise_performance.dart';
 import '../domain/rest_timer.dart';
+import '../domain/session_start.dart';
 import '../domain/set_prefill.dart';
 import '../domain/set_values.dart';
 import '../domain/workout_repository.dart';
@@ -382,6 +384,21 @@ class DriftWorkoutRepository implements WorkoutRepository {
   }
 
   // History.
+
+  @override
+  Stream<List<SessionStart>> watchFinishedStarts() => _dao
+      .watchChanges()
+      .asyncMap(
+        (_) async => [
+          for (final row in await _dao.getAllFinishedSessions())
+            SessionStart(
+              sessionId: row.id,
+              routineDayId: row.routineDayId,
+              startedAt: row.startedAt,
+            ),
+        ],
+      )
+      .distinct(listEquals);
 
   @override
   Future<void> updateNotes(String sessionId, String notes) async {

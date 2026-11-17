@@ -9,6 +9,7 @@ import 'package:app_entrenamiento/features/routines/domain/routine_drafts.dart';
 import 'package:app_entrenamiento/features/workout/data/drift_workout_repository.dart';
 import 'package:app_entrenamiento/features/workout/domain/enums/session_status.dart';
 import 'package:app_entrenamiento/features/workout/domain/rest_timer.dart';
+import 'package:app_entrenamiento/features/workout/domain/session_start.dart';
 import 'package:app_entrenamiento/features/workout/domain/set_values.dart';
 import 'package:app_entrenamiento/features/workout/domain/workout_repository.dart';
 import 'package:app_entrenamiento/features/workout/domain/workout_session.dart';
@@ -738,6 +739,41 @@ void main() {
       expect([for (final s in sessions) s.id], [first.id, second.id]);
       expect(sessions.last.exercises, hasLength(2));
       expect(sessions.last.routineDayName, 'Push');
+    });
+
+    test('given finished, discarded, demo and active sessions, when the '
+        'finished starts are watched, then only finished real sessions are '
+        'listed, newest first', () async {
+      final day = await createDay();
+      final first = await repository.startFromRoutineDay(day.id);
+      await completeAndFinish();
+      advance(const Duration(days: 1));
+      final free = await repository.startFree();
+      await repository.finish(free.id);
+      advance(const Duration(days: 1));
+      final discarded = await repository.startFree();
+      await repository.discard(discarded.id);
+      await db
+          .into(db.workoutSessions)
+          .insert(
+            WorkoutSessionsCompanion.insert(
+              startedAt: now,
+              status: const Value(SessionStatus.completed),
+              isDemo: const Value(true),
+            ),
+          );
+      await repository.startFree();
+
+      final starts = await repository.watchFinishedStarts().first;
+
+      expect(starts, [
+        SessionStart(sessionId: free.id, startedAt: free.startedAt),
+        SessionStart(
+          sessionId: first.id,
+          routineDayId: day.id,
+          startedAt: first.startedAt,
+        ),
+      ]);
     });
 
     test('given a range being watched, when a session in it is finished, '

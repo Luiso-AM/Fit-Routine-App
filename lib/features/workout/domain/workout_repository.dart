@@ -1,5 +1,6 @@
 import '../../exercises/domain/exercise.dart';
 import 'exercise_performance.dart';
+import 'session_start.dart';
 import 'set_values.dart';
 import 'workout_session.dart';
 
@@ -92,6 +93,10 @@ abstract interface class WorkoutRepository {
   ///
   /// Throws [WorkoutNotFoundException] or [SessionNotInProgressException].
   Future<void> discard(String sessionId);
+
+  /// When every finished (not demo) session started, newest first.
+  /// Re-emitted on every change.
+  Stream<List<SessionStart>> watchFinishedStarts();
 
   /// Replaces the session's notes. Throws [WorkoutNotFoundException].
   Future<void> updateNotes(String sessionId, String notes);

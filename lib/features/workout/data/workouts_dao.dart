@@ -221,4 +221,15 @@ class WorkoutsDao extends DatabaseAccessor<AppDatabase>
             )
             ..orderBy([(s) => OrderingTerm.asc(s.startedAt)]))
           .get();
+
+  /// Every finished, real session, newest first.
+  Future<List<WorkoutSessionRow>> getAllFinishedSessions() =>
+      (select(workoutSessions)
+            ..where(
+              (s) =>
+                  s.status.equalsValue(SessionStatus.completed) &
+                  s.isDemo.equals(false),
+            )
+            ..orderBy([(s) => OrderingTerm.desc(s.startedAt)]))
+          .get();
 }
