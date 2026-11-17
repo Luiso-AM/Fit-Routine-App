@@ -18,4 +18,29 @@ void main() {
       expect(formatClock(const Duration(seconds: -5)), '0:00');
     });
   });
+
+  group('formatHoursMinutes', () {
+    test('given under an hour, then it shows whole minutes', () {
+      expect(
+        formatHoursMinutes(const Duration(minutes: 45, seconds: 59)),
+        '45 min',
+      );
+      expect(formatHoursMinutes(Duration.zero), '0 min');
+    });
+
+    test('given whole hours, then the minutes are left out', () {
+      expect(formatHoursMinutes(const Duration(hours: 2)), '2 h');
+    });
+
+    test('given hours and minutes, then it shows both', () {
+      expect(
+        formatHoursMinutes(const Duration(hours: 2, minutes: 15)),
+        '2 h 15 min',
+      );
+    });
+
+    test('given a negative duration, then it shows zero', () {
+      expect(formatHoursMinutes(const Duration(minutes: -3)), '0 min');
+    });
+  });
 }
