@@ -38,8 +38,8 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
   Stream<WorkoutSession?> watchActive() => watchValue(() => _active);
 
   @override
-  Future<WorkoutSession?> getSession(String sessionId) async =>
-      _sessions.where((s) => s.id == sessionId).firstOrNull;
+  Stream<WorkoutSession?> watchSession(String sessionId) =>
+      watchValue(() => _sessions.where((s) => s.id == sessionId).firstOrNull);
 
   // Lookups and updates.
 

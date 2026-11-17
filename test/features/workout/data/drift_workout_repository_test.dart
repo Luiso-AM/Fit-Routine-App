@@ -624,14 +624,14 @@ void main() {
   });
 
   group('summary', () {
-    test('given a finished session, when loaded by id, '
+    test('given a finished session, when watched by id, '
         'then it comes with its names, exercises and sets', () async {
       final day = await createDay();
       final started = await repository.startFromRoutineDay(day.id);
       advance(const Duration(minutes: 45));
       await completeAndFinish();
 
-      final session = (await repository.getSession(started.id))!;
+      final session = (await repository.watchSession(started.id).first)!;
 
       expect(session.status, SessionStatus.completed);
       expect(session.endedAt, now);
@@ -640,8 +640,8 @@ void main() {
       expect(session.completedSets, session.totalSets);
     });
 
-    test('given an unknown id, when loaded, then it is null', () async {
-      expect(await repository.getSession('missing'), isNull);
+    test('given an unknown id, when watched, then it is null', () async {
+      expect(await repository.watchSession('missing').first, isNull);
     });
 
     test(
@@ -660,7 +660,7 @@ void main() {
         advance(const Duration(days: 2));
         final current = await repository.startFromRoutineDay(day.id);
         await completeAndFinish();
-        final stored = (await repository.getSession(current.id))!;
+        final stored = (await repository.watchSession(current.id).first)!;
 
         final previous = await repository.previousSessionOf(stored);
 

@@ -230,24 +230,27 @@ final class LastPerformanceFamily extends $Family
 }
 
 /// Summary of a session, compared with the previous session of its
-/// routine day. `null` if the session does not exist.
+/// routine day. `null` if the session does not exist. Updated when the
+/// session is edited.
 
 @ProviderFor(sessionSummary)
 final sessionSummaryProvider = SessionSummaryFamily._();
 
 /// Summary of a session, compared with the previous session of its
-/// routine day. `null` if the session does not exist.
+/// routine day. `null` if the session does not exist. Updated when the
+/// session is edited.
 
 final class SessionSummaryProvider
     extends
         $FunctionalProvider<
           AsyncValue<SessionSummary?>,
           SessionSummary?,
-          FutureOr<SessionSummary?>
+          Stream<SessionSummary?>
         >
-    with $FutureModifier<SessionSummary?>, $FutureProvider<SessionSummary?> {
+    with $FutureModifier<SessionSummary?>, $StreamProvider<SessionSummary?> {
   /// Summary of a session, compared with the previous session of its
-  /// routine day. `null` if the session does not exist.
+  /// routine day. `null` if the session does not exist. Updated when the
+  /// session is edited.
   SessionSummaryProvider._({
     required SessionSummaryFamily super.from,
     required String super.argument,
@@ -271,12 +274,12 @@ final class SessionSummaryProvider
 
   @$internal
   @override
-  $FutureProviderElement<SessionSummary?> $createElement(
+  $StreamProviderElement<SessionSummary?> $createElement(
     $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  ) => $StreamProviderElement(pointer);
 
   @override
-  FutureOr<SessionSummary?> create(Ref ref) {
+  Stream<SessionSummary?> create(Ref ref) {
     final argument = this.argument as String;
     return sessionSummary(ref, argument);
   }
@@ -292,13 +295,14 @@ final class SessionSummaryProvider
   }
 }
 
-String _$sessionSummaryHash() => r'8dbda3139f934c29ff0fdf7f80eb69c0ee9fc6ce';
+String _$sessionSummaryHash() => r'c07c7b67320b8d19e388c1271c30bc19e7eea877';
 
 /// Summary of a session, compared with the previous session of its
-/// routine day. `null` if the session does not exist.
+/// routine day. `null` if the session does not exist. Updated when the
+/// session is edited.
 
 final class SessionSummaryFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<SessionSummary?>, String> {
+    with $FunctionalFamilyOverride<Stream<SessionSummary?>, String> {
   SessionSummaryFamily._()
     : super(
         retry: null,
@@ -309,7 +313,8 @@ final class SessionSummaryFamily extends $Family
       );
 
   /// Summary of a session, compared with the previous session of its
-  /// routine day. `null` if the session does not exist.
+  /// routine day. `null` if the session does not exist. Updated when the
+  /// session is edited.
 
   SessionSummaryProvider call(String sessionId) =>
       SessionSummaryProvider._(argument: sessionId, from: this);

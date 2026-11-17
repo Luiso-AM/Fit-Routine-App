@@ -9,8 +9,8 @@ abstract interface class WorkoutRepository {
   Stream<WorkoutSession?> watchActive();
 
   /// A session of any status with its exercises and sets, or `null` if it
-  /// does not exist.
-  Future<WorkoutSession?> getSession(String sessionId);
+  /// does not exist. Re-emitted on every change.
+  Stream<WorkoutSession?> watchSession(String sessionId);
 
   /// Starts a session with a copy of the day's exercises and targets.
   /// Sets are prefilled from the last time each exercise was done.

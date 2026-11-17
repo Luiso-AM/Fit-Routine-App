@@ -35,7 +35,10 @@ class DriftWorkoutRepository implements WorkoutRepository {
   }
 
   @override
-  Future<WorkoutSession?> getSession(String sessionId) async {
+  Stream<WorkoutSession?> watchSession(String sessionId) =>
+      _dao.watchChanges().asyncMap((_) => _load(sessionId)).distinct();
+
+  Future<WorkoutSession?> _load(String sessionId) async {
     final row = await _dao.getSession(sessionId);
     return row == null ? null : _assemble(row);
   }

@@ -42,16 +42,18 @@ Future<ExercisePerformance?> lastPerformance(Ref ref, String exerciseId) async {
 }
 
 /// Summary of a session, compared with the previous session of its
-/// routine day. `null` if the session does not exist.
+/// routine day. `null` if the session does not exist. Updated when the
+/// session is edited.
 @riverpod
-Future<SessionSummary?> sessionSummary(Ref ref, String sessionId) async {
+Stream<SessionSummary?> sessionSummary(Ref ref, String sessionId) {
   final repository = ref.watch(workoutRepositoryProvider);
-  final session = await repository.getSession(sessionId);
-  if (session == null) return null;
-  return SessionSummary.of(
-    session,
-    previous: await repository.previousSessionOf(session),
-  );
+  return repository.watchSession(sessionId).asyncMap((session) async {
+    if (session == null) return null;
+    return SessionSummary.of(
+      session,
+      previous: await repository.previousSessionOf(session),
+    );
+  });
 }
 
 /// Keeps the rest notification in step with the active session: it is
