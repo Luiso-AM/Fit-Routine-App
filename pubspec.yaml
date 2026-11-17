@@ -46,6 +46,7 @@ dependencies:
   wakelock_plus: ^1.8.2
   flutter_local_notifications: ^23.0.2
   timezone: ^0.11.2
+  table_calendar: ^3.3.0
 
 dev_dependencies:
   flutter_test:
