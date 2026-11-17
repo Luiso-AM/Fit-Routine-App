@@ -581,7 +581,7 @@ mixin _$SessionSummary {
 
  WorkoutSession get session; SessionTotals get totals;/// The completed sets of each session exercise, in session order.
 /// Exercises without completed sets are left out.
- List<ExercisePerformance> get exercises;/// Against the [previous] session of the same routine day, if any.
+ List<ExercisePerformance> get exercises;/// Against the previous session of the same routine day, if any.
  SessionComparison? get comparison;
 /// Create a copy of SessionSummary
 /// with the given fields replaced by the non-null parameter values.
@@ -828,7 +828,7 @@ class _SessionSummary implements SessionSummary {
   return EqualUnmodifiableListView(_exercises);
 }
 
-/// Against the [previous] session of the same routine day, if any.
+/// Against the previous session of the same routine day, if any.
 @override final  SessionComparison? comparison;
 
 /// Create a copy of SessionSummary
