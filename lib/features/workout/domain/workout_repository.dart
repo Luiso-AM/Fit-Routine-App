@@ -8,6 +8,10 @@ abstract interface class WorkoutRepository {
   /// Re-emitted on every change.
   Stream<WorkoutSession?> watchActive();
 
+  /// A session of any status with its exercises and sets, or `null` if it
+  /// does not exist.
+  Future<WorkoutSession?> getSession(String sessionId);
+
   /// Starts a session with a copy of the day's exercises and targets.
   /// Sets are prefilled from the last time each exercise was done.
   ///
@@ -85,6 +89,11 @@ abstract interface class WorkoutRepository {
   Future<Map<String, ExercisePerformance>> lastPerformances(
     Iterable<String> exerciseIds,
   );
+
+  /// The latest finished (not demo) session of the same routine day that
+  /// started before [session]. `null` for free sessions, or if the day was
+  /// not done before.
+  Future<WorkoutSession?> previousSessionOf(WorkoutSession session);
 }
 
 /// A session, session exercise, set or routine day that does not exist.

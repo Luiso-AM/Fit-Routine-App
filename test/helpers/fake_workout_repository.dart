@@ -37,6 +37,10 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
   @override
   Stream<WorkoutSession?> watchActive() => watchValue(() => _active);
 
+  @override
+  Future<WorkoutSession?> getSession(String sessionId) async =>
+      _sessions.where((s) => s.id == sessionId).firstOrNull;
+
   // Lookups and updates.
 
   int _sessionIndex(String id) {
@@ -372,5 +376,20 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
       }
     }
     return result;
+  }
+
+  @override
+  Future<WorkoutSession?> previousSessionOf(WorkoutSession session) async {
+    final dayId = session.routineDayId;
+    if (dayId == null) return null;
+    final earlier = [
+      for (final s in _sessions)
+        if (s.routineDayId == dayId &&
+            s.status == SessionStatus.completed &&
+            !s.isDemo &&
+            s.startedAt.isBefore(session.startedAt))
+          s,
+    ]..sort((a, b) => b.startedAt.compareTo(a.startedAt));
+    return earlier.firstOrNull;
   }
 }

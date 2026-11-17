@@ -622,4 +622,90 @@ void main() {
       );
     });
   });
+
+  group('summary', () {
+    test('given a finished session, when loaded by id, '
+        'then it comes with its names, exercises and sets', () async {
+      final day = await createDay();
+      final started = await repository.startFromRoutineDay(day.id);
+      advance(const Duration(minutes: 45));
+      await completeAndFinish();
+
+      final session = (await repository.getSession(started.id))!;
+
+      expect(session.status, SessionStatus.completed);
+      expect(session.endedAt, now);
+      expect((session.routineName, session.routineDayName), ('PPL', 'Push'));
+      expect(session.exercises, hasLength(2));
+      expect(session.completedSets, session.totalSets);
+    });
+
+    test('given an unknown id, when loaded, then it is null', () async {
+      expect(await repository.getSession('missing'), isNull);
+    });
+
+    test(
+      'given earlier sessions of the day, when the previous one is '
+      'looked up, then the latest finished one before it is returned',
+      () async {
+        final day = await createDay();
+        final first = await repository.startFromRoutineDay(day.id);
+        await completeAndFinish();
+        advance(const Duration(days: 2));
+        final second = await repository.startFromRoutineDay(day.id);
+        await completeAndFinish();
+        advance(const Duration(days: 2));
+        final discarded = await repository.startFromRoutineDay(day.id);
+        await repository.discard(discarded.id);
+        advance(const Duration(days: 2));
+        final current = await repository.startFromRoutineDay(day.id);
+        await completeAndFinish();
+        final stored = (await repository.getSession(current.id))!;
+
+        final previous = await repository.previousSessionOf(stored);
+
+        expect(previous?.id, second.id);
+        expect(previous?.completedSets, previous?.totalSets);
+        expect((await repository.previousSessionOf(previous!))?.id, first.id);
+      },
+    );
+
+    test('given the first session of a day, when the previous one is '
+        'looked up, then it is null', () async {
+      final day = await createDay();
+      final session = await repository.startFromRoutineDay(day.id);
+      await completeAndFinish();
+
+      expect(await repository.previousSessionOf(session), isNull);
+    });
+
+    test('given a demo session of the day, when the previous one is '
+        'looked up, then it is ignored', () async {
+      final day = await createDay();
+      await db
+          .into(db.workoutSessions)
+          .insert(
+            WorkoutSessionsCompanion.insert(
+              routineDayId: Value(day.id),
+              startedAt: now.subtract(const Duration(days: 1)),
+              status: const Value(SessionStatus.completed),
+              isDemo: const Value(true),
+            ),
+          );
+      final session = await repository.startFromRoutineDay(day.id);
+      await completeAndFinish();
+
+      expect(await repository.previousSessionOf(session), isNull);
+    });
+
+    test('given a free session, when the previous one is looked up, '
+        'then it is null', () async {
+      await repository.startFree();
+      await completeAndFinish();
+      advance(const Duration(days: 1));
+      final session = await repository.startFree();
+
+      expect(await repository.previousSessionOf(session), isNull);
+    });
+  });
 }

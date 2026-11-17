@@ -34,6 +34,12 @@ class DriftWorkoutRepository implements WorkoutRepository {
     return row == null ? null : _assemble(row);
   }
 
+  @override
+  Future<WorkoutSession?> getSession(String sessionId) async {
+    final row = await _dao.getSession(sessionId);
+    return row == null ? null : _assemble(row);
+  }
+
   Future<WorkoutSession> _assemble(WorkoutSessionRow row) async {
     final (routineName, dayName) = await _dao.getDayNames(row.routineDayId);
     final exercises = await _dao.getSessionExercises(row.id);
@@ -377,6 +383,14 @@ class DriftWorkoutRepository implements WorkoutRepository {
       );
     }
     return result;
+  }
+
+  @override
+  Future<WorkoutSession?> previousSessionOf(WorkoutSession session) async {
+    final dayId = session.routineDayId;
+    if (dayId == null) return null;
+    final row = await _dao.getPreviousSessionOfDay(dayId, session.startedAt);
+    return row == null ? null : _assemble(row);
   }
 
   // Lookups.

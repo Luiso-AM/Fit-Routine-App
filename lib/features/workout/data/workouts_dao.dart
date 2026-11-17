@@ -187,4 +187,22 @@ class WorkoutsDao extends DatabaseAccessor<AppDatabase>
           ]);
     return [for (final row in await query.get()) row.readTable(setEntries)];
   }
+
+  /// The latest finished, real session of [routineDayId] that started
+  /// before [before].
+  Future<WorkoutSessionRow?> getPreviousSessionOfDay(
+    String routineDayId,
+    DateTime before,
+  ) =>
+      (select(workoutSessions)
+            ..where(
+              (s) =>
+                  s.routineDayId.equals(routineDayId) &
+                  s.startedAt.isSmallerThanValue(before) &
+                  s.status.equalsValue(SessionStatus.completed) &
+                  s.isDemo.equals(false),
+            )
+            ..orderBy([(s) => OrderingTerm.desc(s.startedAt)])
+            ..limit(1))
+          .getSingleOrNull();
 }
