@@ -6,6 +6,7 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../exercises/domain/exercise.dart';
 import '../../data/routine_data_providers.dart';
+import '../../domain/day_muscles.dart';
 import '../../domain/routine.dart';
 import '../../domain/routine_drafts.dart';
 import '../../domain/routine_repository.dart';

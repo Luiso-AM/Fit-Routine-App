@@ -5,7 +5,7 @@ import '../../../../core/widgets/exercise_picker.dart';
 import '../../../exercises/domain/enums/muscle_group.dart';
 import '../../../exercises/domain/exercise.dart';
 import '../routine_providers.dart';
-import '../widgets/routine_widgets.dart';
+import '../../domain/day_muscles.dart';
 
 /// Picks exercises to add to a routine day. Pops with the selected ids, in
 /// the order they were picked.
