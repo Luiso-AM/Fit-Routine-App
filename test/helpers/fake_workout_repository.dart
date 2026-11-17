@@ -41,6 +41,21 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
   Stream<WorkoutSession?> watchSession(String sessionId) =>
       watchValue(() => _sessions.where((s) => s.id == sessionId).firstOrNull);
 
+  @override
+  Stream<List<WorkoutSession>> watchFinished({
+    required DateTime from,
+    required DateTime to,
+  }) => watchValue(
+    () => [
+      for (final s in _sessions)
+        if (s.status == SessionStatus.completed &&
+            !s.isDemo &&
+            !s.startedAt.isBefore(from) &&
+            s.startedAt.isBefore(to))
+          s,
+    ]..sort((a, b) => a.startedAt.compareTo(b.startedAt)),
+  );
+
   // Lookups and updates.
 
   int _sessionIndex(String id) {
@@ -258,7 +273,8 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
       completedAt: completed ? _now() : null,
     );
     final session = _sessions[s];
-    if (completed && session.isInProgress && !session.isPaused) {
+    if (!session.isInProgress) return _replaceSets(s, e, sets);
+    if (completed && !session.isPaused) {
       final endsAt = RestTimer.endAfter(
         session.exercises[e].restSeconds,
         _now(),
@@ -348,6 +364,23 @@ class FakeWorkoutRepository with Watchable implements WorkoutRepository {
   }
 
   // History.
+
+  @override
+  Future<void> updateNotes(String sessionId, String notes) async {
+    final s = _sessionIndex(sessionId);
+    _sessions[s] = _sessions[s].copyWith(notes: notes);
+    notifyChanged();
+  }
+
+  @override
+  Future<void> removeFromHistory(String sessionId) async {
+    final s = _sessionIndex(sessionId);
+    if (_sessions[s].status != SessionStatus.completed) {
+      throw SessionNotFinishedException(sessionId);
+    }
+    _sessions[s] = _sessions[s].copyWith(status: SessionStatus.discarded);
+    notifyChanged();
+  }
 
   @override
   Future<Map<String, ExercisePerformance>> lastPerformances(

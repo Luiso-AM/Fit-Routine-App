@@ -708,4 +708,130 @@ void main() {
       expect(await repository.previousSessionOf(session), isNull);
     });
   });
+
+  group('history', () {
+    test('given sessions of several days, when watching a range, then only '
+        'finished real sessions that started in it are listed, oldest '
+        'first', () async {
+      final day = await createDay();
+      // Before the range.
+      await repository.startFromRoutineDay(day.id);
+      await completeAndFinish();
+      final from = now.add(const Duration(days: 1));
+      advance(const Duration(days: 2));
+      final first = await repository.startFree();
+      await repository.finish(first.id);
+      advance(const Duration(hours: 3));
+      final second = await repository.startFromRoutineDay(day.id);
+      await completeAndFinish();
+      advance(const Duration(hours: 1));
+      final discarded = await repository.startFree();
+      await repository.discard(discarded.id);
+      final to = now.add(const Duration(days: 1));
+      advance(const Duration(days: 2));
+      final after = await repository.startFree();
+      await repository.finish(after.id);
+      await repository.startFree();
+
+      final sessions = await repository.watchFinished(from: from, to: to).first;
+
+      expect([for (final s in sessions) s.id], [first.id, second.id]);
+      expect(sessions.last.exercises, hasLength(2));
+      expect(sessions.last.routineDayName, 'Push');
+    });
+
+    test('given a range being watched, when a session in it is finished, '
+        'then the list is emitted again', () async {
+      final session = await repository.startFree();
+      final stream = repository.watchFinished(
+        from: now,
+        to: now.add(const Duration(days: 1)),
+      );
+
+      final emitted = expectLater(
+        stream.map((sessions) => sessions.length),
+        emitsInOrder([0, 1]),
+      );
+      await repository.finish(session.id);
+      await emitted;
+    });
+
+    test('given a finished session, when a pending set is completed, '
+        'then no rest starts and the next set keeps its values', () async {
+      final day = await createDay();
+      final started = await repository.startFromRoutineDay(day.id);
+      await repository.finish(started.id);
+      final [first, second, ...] = started.exercises.first.sets;
+      await repository.updateSet(
+        first.id,
+        const SetValues(weightKg: 70, reps: 5),
+      );
+
+      await repository.setCompleted(first.id, completed: true);
+
+      final session = (await repository.watchSession(started.id).first)!;
+      final [storedFirst, storedSecond, ...] = session.exercises.first.sets;
+      expect(storedFirst.isCompleted, isTrue);
+      expect(storedSecond.weightKg, second.weightKg);
+      expect(storedSecond.reps, second.reps);
+      expect(session.restEndsAt, isNull);
+    });
+
+    test('given a session, when its notes are updated, '
+        'then they are saved', () async {
+      final session = await repository.startFree();
+      await repository.finish(session.id);
+
+      await repository.updateNotes(session.id, 'Buen día');
+
+      expect(
+        (await repository.watchSession(session.id).first)!.notes,
+        'Buen día',
+      );
+    });
+
+    test('given an unknown session, when its notes are updated, '
+        'then it is rejected', () async {
+      expect(
+        repository.updateNotes('missing', 'x'),
+        throwsA(isA<WorkoutNotFoundException>()),
+      );
+    });
+
+    test('given a finished session, when removed from history, then it is '
+        'discarded and left out of history and comparisons', () async {
+      final day = await createDay();
+      final removed = await repository.startFromRoutineDay(day.id);
+      await completeAndFinish();
+      advance(const Duration(days: 1));
+      final next = await repository.startFromRoutineDay(day.id);
+      await completeAndFinish();
+
+      await repository.removeFromHistory(removed.id);
+
+      final session = (await repository.watchSession(removed.id).first)!;
+      expect(session.status, SessionStatus.discarded);
+      expect(session.completedSets, session.totalSets);
+      final history = await repository
+          .watchFinished(
+            from: removed.startedAt,
+            to: now.add(const Duration(days: 1)),
+          )
+          .first;
+      expect([for (final s in history) s.id], [next.id]);
+      expect(await repository.previousSessionOf(next), isNull);
+      final last = await repository.lastPerformances([_compound.id]);
+      expect(last[_compound.id]?.sessionId, next.id);
+    });
+
+    test('given a session in progress, when removed from history, '
+        'then it is rejected', () async {
+      final session = await repository.startFree();
+
+      expect(
+        repository.removeFromHistory(session.id),
+        throwsA(isA<SessionNotFinishedException>()),
+      );
+    });
+  });
 }

@@ -12,6 +12,14 @@ abstract interface class WorkoutRepository {
   /// does not exist. Re-emitted on every change.
   Stream<WorkoutSession?> watchSession(String sessionId);
 
+  /// Finished (not demo) sessions that started from [from] (inclusive) to
+  /// [to] (exclusive), oldest first, with their exercises and sets.
+  /// Re-emitted on every change.
+  Stream<List<WorkoutSession>> watchFinished({
+    required DateTime from,
+    required DateTime to,
+  });
+
   /// Starts a session with a copy of the day's exercises and targets.
   /// Sets are prefilled from the last time each exercise was done.
   ///
@@ -45,10 +53,11 @@ abstract interface class WorkoutRepository {
   /// not valid.
   Future<void> updateSet(String setId, SetValues values);
 
-  /// Marks a set as completed or pending. Completing a set prefills the
-  /// next pending set with its weight and reps and, unless the session is
-  /// paused, starts the rest timer with the exercise's rest. Marking it
-  /// pending leaves the rest timer as it is.
+  /// Marks a set as completed or pending. In a session in progress,
+  /// completing a set prefills the next pending set with its weight and
+  /// reps and, unless the session is paused, starts the rest timer with the
+  /// exercise's rest. Marking it pending leaves the rest timer as it is.
+  /// In a finished session only the set changes.
   ///
   /// Throws [WorkoutNotFoundException].
   Future<void> setCompleted(String setId, {required bool completed});
@@ -84,6 +93,15 @@ abstract interface class WorkoutRepository {
   /// Throws [WorkoutNotFoundException] or [SessionNotInProgressException].
   Future<void> discard(String sessionId);
 
+  /// Replaces the session's notes. Throws [WorkoutNotFoundException].
+  Future<void> updateNotes(String sessionId, String notes);
+
+  /// Leaves a finished session out of history and statistics by marking it
+  /// as discarded. Its data is kept.
+  ///
+  /// Throws [WorkoutNotFoundException] or [SessionNotFinishedException].
+  Future<void> removeFromHistory(String sessionId);
+
   /// The most recent finished (not demo) session where each exercise had
   /// at least one completed set. Exercises never done are left out.
   Future<Map<String, ExercisePerformance>> lastPerformances(
@@ -114,6 +132,15 @@ class ActiveSessionExistsException implements Exception {
 
   @override
   String toString() => 'ActiveSessionExistsException: $sessionId';
+}
+
+class SessionNotFinishedException implements Exception {
+  const SessionNotFinishedException(this.sessionId);
+
+  final String sessionId;
+
+  @override
+  String toString() => 'SessionNotFinishedException: $sessionId';
 }
 
 class SessionNotInProgressException implements Exception {

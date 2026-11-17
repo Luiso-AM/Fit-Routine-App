@@ -205,4 +205,20 @@ class WorkoutsDao extends DatabaseAccessor<AppDatabase>
             ..orderBy([(s) => OrderingTerm.desc(s.startedAt)])
             ..limit(1))
           .getSingleOrNull();
+
+  /// Finished, real sessions that started in [from, to), oldest first.
+  Future<List<WorkoutSessionRow>> getFinishedSessions(
+    DateTime from,
+    DateTime to,
+  ) =>
+      (select(workoutSessions)
+            ..where(
+              (s) =>
+                  s.startedAt.isBiggerOrEqualValue(from) &
+                  s.startedAt.isSmallerThanValue(to) &
+                  s.status.equalsValue(SessionStatus.completed) &
+                  s.isDemo.equals(false),
+            )
+            ..orderBy([(s) => OrderingTerm.asc(s.startedAt)]))
+          .get();
 }

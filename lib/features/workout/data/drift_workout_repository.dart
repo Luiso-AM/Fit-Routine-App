@@ -38,6 +38,15 @@ class DriftWorkoutRepository implements WorkoutRepository {
   Stream<WorkoutSession?> watchSession(String sessionId) =>
       _dao.watchChanges().asyncMap((_) => _load(sessionId)).distinct();
 
+  @override
+  Stream<List<WorkoutSession>> watchFinished({
+    required DateTime from,
+    required DateTime to,
+  }) => _dao.watchChanges().asyncMap((_) async {
+    final rows = await _dao.getFinishedSessions(from.toUtc(), to.toUtc());
+    return [for (final row in rows) await _assemble(row)];
+  });
+
   Future<WorkoutSession?> _load(String sessionId) async {
     final row = await _dao.getSession(sessionId);
     return row == null ? null : _assemble(row);
@@ -231,8 +240,11 @@ class DriftWorkoutRepository implements WorkoutRepository {
         ),
       );
       if (!completed) return;
+      final exercise = await _requireSessionExercise(row.sessionExerciseId);
+      final session = (await _requireSession(exercise.sessionId)).toDomain();
+      if (!session.isInProgress) return;
 
-      await _startRest(row.sessionExerciseId, now);
+      await _startRest(exercise, session, now);
       final sets = [
         for (final s in await _dao.getSets([row.sessionExerciseId]))
           s.toDomain(),
@@ -250,10 +262,12 @@ class DriftWorkoutRepository implements WorkoutRepository {
     });
   }
 
-  Future<void> _startRest(String sessionExerciseId, DateTime now) async {
-    final exercise = await _requireSessionExercise(sessionExerciseId);
-    final session = (await _requireSession(exercise.sessionId)).toDomain();
-    if (!session.isInProgress || session.isPaused) return;
+  Future<void> _startRest(
+    SessionExerciseRow exercise,
+    WorkoutSession session,
+    DateTime now,
+  ) async {
+    if (session.isPaused) return;
     final endsAt = RestTimer.endAfter(exercise.restSeconds, now);
     if (endsAt == null) return;
     await _setRestEnd(session.id, endsAt, now);
@@ -368,6 +382,30 @@ class DriftWorkoutRepository implements WorkoutRepository {
   }
 
   // History.
+
+  @override
+  Future<void> updateNotes(String sessionId, String notes) async {
+    await _requireSession(sessionId);
+    await _dao.updateSession(
+      sessionId,
+      WorkoutSessionsCompanion(notes: Value(notes), updatedAt: Value(_now())),
+    );
+  }
+
+  @override
+  Future<void> removeFromHistory(String sessionId) async {
+    final session = (await _requireSession(sessionId)).toDomain();
+    if (session.status != SessionStatus.completed) {
+      throw SessionNotFinishedException(sessionId);
+    }
+    await _dao.updateSession(
+      sessionId,
+      WorkoutSessionsCompanion(
+        status: const Value(SessionStatus.discarded),
+        updatedAt: Value(_now()),
+      ),
+    );
+  }
 
   @override
   Future<Map<String, ExercisePerformance>> lastPerformances(
