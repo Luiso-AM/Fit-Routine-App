@@ -26,6 +26,10 @@ abstract final class AppRoutes {
   /// Starts a session from a routine day, then opens the workout tab.
   static String workoutStart(String dayId) => '$workout/start/$dayId';
 
+  /// Summary of a finished session.
+  static String workoutSummary(String sessionId) =>
+      '$workout/summary/$sessionId';
+
   // Routines tab.
   static String routineDetail(String id) => '$routines/$id';
 

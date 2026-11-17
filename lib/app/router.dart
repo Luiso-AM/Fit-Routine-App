@@ -20,6 +20,7 @@ import '../features/routines/presentation/screens/exercise_picker_screen.dart';
 import '../features/routines/presentation/screens/routine_day_screen.dart';
 import '../features/routines/presentation/screens/routine_detail_screen.dart';
 import '../features/routines/presentation/screens/routines_screen.dart';
+import '../features/workout/presentation/screens/session_summary_screen.dart';
 import '../features/workout/presentation/screens/start_workout_screen.dart';
 import '../features/workout/presentation/screens/workout_exercise_picker_screen.dart';
 import '../features/workout/presentation/widgets/resume_workout_prompt.dart';
@@ -75,6 +76,12 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'start/:dayId',
                     builder: (context, state) => StartWorkoutScreen(
                       routineDayId: state.pathParameters['dayId']!,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'summary/:sessionId',
+                    builder: (context, state) => SessionSummaryScreen(
+                      sessionId: state.pathParameters['sessionId']!,
                     ),
                   ),
                 ],

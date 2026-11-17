@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -60,16 +62,13 @@ class ActiveWorkoutView extends ConsumerWidget {
       cancelLabel: WorkoutStrings.cancel,
     );
     if (!confirmed || !context.mounted) return;
-    final messenger = ScaffoldMessenger.of(context);
+    // This view goes away once the session ends; keep the router.
+    final router = GoRouter.of(context);
     final done = await guardWorkout(
       context,
       () => _repository(ref).finish(session.id),
     );
-    if (done) {
-      messenger.showSnackBar(
-        const SnackBar(content: Text(WorkoutStrings.finished)),
-      );
-    }
+    if (done) unawaited(router.push(AppRoutes.workoutSummary(session.id)));
   }
 
   Future<void> _discard(BuildContext context, WidgetRef ref) async {

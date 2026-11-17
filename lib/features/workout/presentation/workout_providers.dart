@@ -10,6 +10,7 @@ import '../../routines/data/routine_data_providers.dart';
 import '../../routines/domain/routine.dart';
 import '../data/workout_data_providers.dart';
 import '../domain/exercise_performance.dart';
+import '../domain/session_summary.dart';
 import '../domain/workout_session.dart';
 
 part 'workout_providers.g.dart';
@@ -38,6 +39,19 @@ Future<ExercisePerformance?> lastPerformance(Ref ref, String exerciseId) async {
     exerciseId,
   ]);
   return last[exerciseId];
+}
+
+/// Summary of a session, compared with the previous session of its
+/// routine day. `null` if the session does not exist.
+@riverpod
+Future<SessionSummary?> sessionSummary(Ref ref, String sessionId) async {
+  final repository = ref.watch(workoutRepositoryProvider);
+  final session = await repository.getSession(sessionId);
+  if (session == null) return null;
+  return SessionSummary.of(
+    session,
+    previous: await repository.previousSessionOf(session),
+  );
 }
 
 /// Keeps the rest notification in step with the active session: it is

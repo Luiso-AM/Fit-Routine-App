@@ -105,6 +105,23 @@ abstract final class WorkoutStrings {
   static const String removeExerciseTitle = '¿Quitar ejercicio?';
   static const String removeExerciseMessage =
       'Se quitará de este entrenamiento junto con sus series.';
-  static const String finished = 'Entrenamiento guardado';
   static const String discarded = 'Entrenamiento descartado';
+
+  // Session summary.
+  static const String summaryTitle = 'Resumen';
+  static const String summaryLoadError = 'No se pudo cargar el resumen.';
+  static const String summaryNotFound = 'Este entrenamiento ya no existe.';
+  static const String exercises = 'Ejercicios';
+  static const String sets = 'Series';
+  static const String totalReps = 'Repeticiones';
+  static const String volume = 'Volumen';
+  static const String performed = 'Lo que hiciste';
+  static const String noCompletedSets =
+      'No completaste ninguna serie en este entrenamiento.';
+  static const String firstTimeDay =
+      'Es la primera vez que haces este día. La próxima vez verás aquí la '
+      'comparación con este entrenamiento.';
+  static const String noChange = 'Igual';
+
+  static String comparedWith(String date) => 'Frente a tu sesión del $date';
 }

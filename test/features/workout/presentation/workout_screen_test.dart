@@ -176,7 +176,8 @@ void main() {
     });
 
     testWidgets('given pending sets, when finished, '
-        'then the user is warned and the session is saved', (tester) async {
+        'then the user is warned, the session is saved and its summary '
+        'is shown', (tester) async {
       final app = await pumpActive(tester);
 
       await _tap(tester, find.text(WorkoutStrings.finish));
@@ -190,7 +191,10 @@ void main() {
       );
 
       expect(app.workouts.sessions.single.status, SessionStatus.completed);
-      expect(find.text(WorkoutStrings.finished), findsOneWidget);
+      expect(_appBarText(WorkoutStrings.summaryTitle), findsOneWidget);
+      expect(find.text(WorkoutStrings.noCompletedSets), findsOneWidget);
+
+      await _tap(tester, find.text(WorkoutStrings.done));
       expect(find.text(WorkoutStrings.startFreeSession), findsOneWidget);
       expect(app.wakeLock.enabled, isFalse);
     });

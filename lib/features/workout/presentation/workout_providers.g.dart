@@ -229,6 +229,95 @@ final class LastPerformanceFamily extends $Family
   String toString() => r'lastPerformanceProvider';
 }
 
+/// Summary of a session, compared with the previous session of its
+/// routine day. `null` if the session does not exist.
+
+@ProviderFor(sessionSummary)
+final sessionSummaryProvider = SessionSummaryFamily._();
+
+/// Summary of a session, compared with the previous session of its
+/// routine day. `null` if the session does not exist.
+
+final class SessionSummaryProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<SessionSummary?>,
+          SessionSummary?,
+          FutureOr<SessionSummary?>
+        >
+    with $FutureModifier<SessionSummary?>, $FutureProvider<SessionSummary?> {
+  /// Summary of a session, compared with the previous session of its
+  /// routine day. `null` if the session does not exist.
+  SessionSummaryProvider._({
+    required SessionSummaryFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'sessionSummaryProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$sessionSummaryHash();
+
+  @override
+  String toString() {
+    return r'sessionSummaryProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<SessionSummary?> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<SessionSummary?> create(Ref ref) {
+    final argument = this.argument as String;
+    return sessionSummary(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SessionSummaryProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$sessionSummaryHash() => r'8dbda3139f934c29ff0fdf7f80eb69c0ee9fc6ce';
+
+/// Summary of a session, compared with the previous session of its
+/// routine day. `null` if the session does not exist.
+
+final class SessionSummaryFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<SessionSummary?>, String> {
+  SessionSummaryFamily._()
+    : super(
+        retry: null,
+        name: r'sessionSummaryProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// Summary of a session, compared with the previous session of its
+  /// routine day. `null` if the session does not exist.
+
+  SessionSummaryProvider call(String sessionId) =>
+      SessionSummaryProvider._(argument: sessionId, from: this);
+
+  @override
+  String toString() => r'sessionSummaryProvider';
+}
+
 /// Keeps the rest notification in step with the active session: it is
 /// scheduled for the end of each rest and cancelled when the rest is
 /// skipped or the session pauses or ends. Watched by the app root so it
