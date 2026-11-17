@@ -124,4 +124,27 @@ abstract final class WorkoutStrings {
   static const String noChange = 'Igual';
 
   static String comparedWith(String date) => 'Frente a tu sesión del $date';
+
+  /// "sáb, 14 nov, 9:30 a. m.", when a session started.
+  static String startedAt(String date, String time) => '$date, $time';
+
+  // Past session, from the history.
+  static const String sessionTitle = 'Entrenamiento';
+  static const String firstTimeDayInHistory =
+      'Fue la primera vez que hiciste este día de rutina.';
+  static const String sessionNotes = 'Observaciones';
+  static const String editSession = 'Editar';
+  static const String removeFromHistory = 'Quitar del historial';
+  static const String removeFromHistoryTitle = '¿Quitar del historial?';
+  static const String removeFromHistoryMessage =
+      'Dejará de aparecer en tu historial y no contará para tus '
+      'estadísticas.';
+  static const String removedFromHistory =
+      'Entrenamiento quitado del historial';
+
+  // Editing a past session.
+  static const String editTitle = 'Editar entrenamiento';
+  static const String notesHint = 'Cómo te sentiste, molestias, ideas…';
+  static const String noExercisesLeft =
+      'Este entrenamiento ya no tiene ejercicios.';
 }

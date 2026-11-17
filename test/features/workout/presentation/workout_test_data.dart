@@ -5,6 +5,7 @@ import 'package:app_entrenamiento/features/exercises/domain/enums/exercise_type.
 import 'package:app_entrenamiento/features/exercises/domain/enums/muscle_group.dart';
 import 'package:app_entrenamiento/features/exercises/domain/exercise.dart';
 import 'package:app_entrenamiento/features/routines/domain/routine.dart';
+import 'package:app_entrenamiento/features/workout/domain/enums/session_status.dart';
 import 'package:app_entrenamiento/features/workout/domain/workout_session.dart';
 
 const bench = Exercise(
@@ -85,6 +86,49 @@ WorkoutSession activeSession({DateTime? startedAt}) => WorkoutSession(
           weightKg: 60,
           reps: 8,
         ),
+      ],
+    ),
+  ],
+);
+
+/// A finished session of the "Push" day (or a free one, without
+/// [routineDayId]), lasting [minutes], with one exercise whose
+/// (weight in kg, reps) [sets] are completed, followed by its
+/// [pendingSets].
+WorkoutSession finishedSession({
+  required String id,
+  required DateTime startedAt,
+  required int minutes,
+  required List<(double, int)> sets,
+  List<(double, int)> pendingSets = const [],
+  String? routineDayId = 'd1',
+  String exerciseId = 'bench',
+  String notes = '',
+}) => WorkoutSession(
+  id: id,
+  routineDayId: routineDayId,
+  routineName: routineDayId == null ? null : 'PPL',
+  routineDayName: routineDayId == null ? null : 'Push',
+  startedAt: startedAt,
+  endedAt: startedAt.add(Duration(minutes: minutes)),
+  status: SessionStatus.completed,
+  notes: notes,
+  exercises: [
+    SessionExercise(
+      id: '$id-e',
+      sessionId: id,
+      exerciseId: exerciseId,
+      position: 0,
+      sets: [
+        for (final (i, (weightKg, reps)) in [...sets, ...pendingSets].indexed)
+          SetEntry(
+            id: '$id-s$i',
+            sessionExerciseId: '$id-e',
+            setNumber: i + 1,
+            weightKg: weightKg,
+            reps: reps,
+            isCompleted: i < sets.length,
+          ),
       ],
     ),
   ],

@@ -1,7 +1,7 @@
 import 'package:app_entrenamiento/core/strings/app_strings.dart';
 import 'package:app_entrenamiento/features/dashboard/presentation/dashboard_screen.dart';
+import 'package:app_entrenamiento/features/history/presentation/history_screen.dart';
 import 'package:app_entrenamiento/features/profile/presentation/profile_screen.dart';
-import 'package:app_entrenamiento/features/progress/presentation/progress_screen.dart';
 import 'package:app_entrenamiento/features/routines/presentation/screens/routines_screen.dart';
 import 'package:app_entrenamiento/features/workout/presentation/workout_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,7 +38,7 @@ void main() {
     final tabs = <String, Type>{
       AppStrings.tabWorkout: WorkoutScreen,
       AppStrings.tabRoutines: RoutinesScreen,
-      AppStrings.tabProgress: ProgressScreen,
+      AppStrings.tabProgress: HistoryScreen,
       AppStrings.tabProfile: ProfileScreen,
       AppStrings.tabHome: DashboardScreen,
     };

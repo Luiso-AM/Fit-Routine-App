@@ -229,6 +229,90 @@ final class LastPerformanceFamily extends $Family
   String toString() => r'lastPerformanceProvider';
 }
 
+/// A session of any status, or `null` if it does not exist.
+
+@ProviderFor(workoutSession)
+final workoutSessionProvider = WorkoutSessionFamily._();
+
+/// A session of any status, or `null` if it does not exist.
+
+final class WorkoutSessionProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<WorkoutSession?>,
+          WorkoutSession?,
+          Stream<WorkoutSession?>
+        >
+    with $FutureModifier<WorkoutSession?>, $StreamProvider<WorkoutSession?> {
+  /// A session of any status, or `null` if it does not exist.
+  WorkoutSessionProvider._({
+    required WorkoutSessionFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'workoutSessionProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$workoutSessionHash();
+
+  @override
+  String toString() {
+    return r'workoutSessionProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<WorkoutSession?> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<WorkoutSession?> create(Ref ref) {
+    final argument = this.argument as String;
+    return workoutSession(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is WorkoutSessionProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$workoutSessionHash() => r'20b2e184f40c0568964c7bb6cca1e00f3f760f76';
+
+/// A session of any status, or `null` if it does not exist.
+
+final class WorkoutSessionFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<WorkoutSession?>, String> {
+  WorkoutSessionFamily._()
+    : super(
+        retry: null,
+        name: r'workoutSessionProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// A session of any status, or `null` if it does not exist.
+
+  WorkoutSessionProvider call(String sessionId) =>
+      WorkoutSessionProvider._(argument: sessionId, from: this);
+
+  @override
+  String toString() => r'workoutSessionProvider';
+}
+
 /// Summary of a session, compared with the previous session of its
 /// routine day. `null` if the session does not exist. Updated when the
 /// session is edited.

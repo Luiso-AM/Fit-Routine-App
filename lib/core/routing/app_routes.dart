@@ -30,6 +30,13 @@ abstract final class AppRoutes {
   static String workoutSummary(String sessionId) =>
       '$workout/summary/$sessionId';
 
+  // Progress tab: training history.
+  static String historySession(String sessionId) =>
+      '$progress/sessions/$sessionId';
+
+  static String historySessionEdit(String sessionId) =>
+      '${historySession(sessionId)}/edit';
+
   // Routines tab.
   static String routineDetail(String id) => '$routines/$id';
 

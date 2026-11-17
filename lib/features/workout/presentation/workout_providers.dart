@@ -41,6 +41,11 @@ Future<ExercisePerformance?> lastPerformance(Ref ref, String exerciseId) async {
   return last[exerciseId];
 }
 
+/// A session of any status, or `null` if it does not exist.
+@riverpod
+Stream<WorkoutSession?> workoutSession(Ref ref, String sessionId) =>
+    ref.watch(workoutRepositoryProvider).watchSession(sessionId);
+
 /// Summary of a session, compared with the previous session of its
 /// routine day. `null` if the session does not exist. Updated when the
 /// session is edited.

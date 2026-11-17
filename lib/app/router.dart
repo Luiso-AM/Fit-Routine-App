@@ -8,6 +8,7 @@ import '../features/dashboard/presentation/dashboard_screen.dart';
 import '../features/exercises/presentation/screens/exercise_detail_screen.dart';
 import '../features/exercises/presentation/screens/exercise_form_screen.dart';
 import '../features/exercises/presentation/screens/exercise_list_screen.dart';
+import '../features/history/presentation/history_screen.dart';
 import '../features/profile/presentation/profile_providers.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/profile/presentation/screens/body_measurement_form_screen.dart';
@@ -15,11 +16,11 @@ import '../features/profile/presentation/screens/body_measurements_history_scree
 import '../features/profile/presentation/screens/body_weight_history_screen.dart';
 import '../features/profile/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_form_screen.dart';
-import '../features/progress/presentation/progress_screen.dart';
 import '../features/routines/presentation/screens/exercise_picker_screen.dart';
 import '../features/routines/presentation/screens/routine_day_screen.dart';
 import '../features/routines/presentation/screens/routine_detail_screen.dart';
 import '../features/routines/presentation/screens/routines_screen.dart';
+import '../features/workout/presentation/screens/session_edit_screen.dart';
 import '../features/workout/presentation/screens/session_summary_screen.dart';
 import '../features/workout/presentation/screens/start_workout_screen.dart';
 import '../features/workout/presentation/screens/workout_exercise_picker_screen.dart';
@@ -150,9 +151,27 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           StatefulShellBranch(
             routes: [
+              // The training history; progress charts join it in phase 2.
               GoRoute(
                 path: AppRoutes.progress,
-                builder: (context, state) => const ProgressScreen(),
+                builder: (context, state) => const HistoryScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'sessions/:sessionId',
+                    builder: (context, state) => SessionSummaryScreen(
+                      sessionId: state.pathParameters['sessionId']!,
+                      fromHistory: true,
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        builder: (context, state) => SessionEditScreen(
+                          sessionId: state.pathParameters['sessionId']!,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

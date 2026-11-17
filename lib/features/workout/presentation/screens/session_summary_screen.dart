@@ -6,54 +6,131 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../../core/units/weight_format.dart';
 import '../../../../core/units/weight_unit.dart';
 import '../../../../core/utils/duration_format.dart';
+import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../exercises/domain/exercise.dart';
+import '../../data/workout_data_providers.dart';
 import '../../domain/exercise_performance.dart';
 import '../../domain/session_summary.dart';
+import '../../domain/enums/session_status.dart';
+import '../workout_actions.dart';
 import '../widgets/workout_widgets.dart';
 import '../workout_providers.dart';
 import '../workout_strings.dart';
 
+enum _HistoryAction { remove }
+
 /// What a finished session achieved, and how it compares with the previous
 /// session of the same routine day.
+///
+/// Shown right after finishing a session, and as the detail of a past
+/// session from the history, where it can be edited or removed.
 class SessionSummaryScreen extends ConsumerWidget {
-  const SessionSummaryScreen({required this.sessionId, super.key});
+  const SessionSummaryScreen({
+    required this.sessionId,
+    this.fromHistory = false,
+    super.key,
+  });
 
   final String sessionId;
+
+  /// Opened from the history rather than after finishing the session.
+  final bool fromHistory;
+
+  Future<void> _remove(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: WorkoutStrings.removeFromHistoryTitle,
+      message: WorkoutStrings.removeFromHistoryMessage,
+      confirmLabel: WorkoutStrings.removeFromHistory,
+      cancelLabel: WorkoutStrings.cancel,
+    );
+    if (!confirmed || !context.mounted) return;
+    final router = GoRouter.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final removed = await guardWorkout(
+      context,
+      () => ref.read(workoutRepositoryProvider).removeFromHistory(sessionId),
+    );
+    if (!removed) return;
+    router.pop();
+    messenger.showSnackBar(
+      const SnackBar(content: Text(WorkoutStrings.removedFromHistory)),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final catalog = ref.watch(workoutExerciseCatalogProvider).value ?? {};
+    final summary = ref.watch(sessionSummaryProvider(sessionId));
+    final editable =
+        fromHistory && summary.value?.session.status == SessionStatus.completed;
 
     return Scaffold(
-      appBar: AppBar(title: const Text(WorkoutStrings.summaryTitle)),
-      body: switch (ref.watch(sessionSummaryProvider(sessionId))) {
+      appBar: AppBar(
+        title: Text(
+          fromHistory
+              ? WorkoutStrings.sessionTitle
+              : WorkoutStrings.summaryTitle,
+        ),
+        actions: [
+          if (editable) ...[
+            IconButton(
+              tooltip: WorkoutStrings.editSession,
+              onPressed: () =>
+                  context.push(AppRoutes.historySessionEdit(sessionId)),
+              icon: const Icon(Icons.edit_outlined),
+            ),
+            PopupMenuButton<_HistoryAction>(
+              tooltip: WorkoutStrings.more,
+              onSelected: (action) => switch (action) {
+                _HistoryAction.remove => _remove(context, ref),
+              },
+              itemBuilder: (context) => const [
+                PopupMenuItem(
+                  value: _HistoryAction.remove,
+                  child: Text(WorkoutStrings.removeFromHistory),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+      body: switch (summary) {
         AsyncData(value: final summary?) => _SummaryView(
           summary: summary,
           catalog: catalog,
+          fromHistory: fromHistory,
         ),
         AsyncData() => const WorkoutMessage(WorkoutStrings.summaryNotFound),
         AsyncError() => const WorkoutMessage(WorkoutStrings.summaryLoadError),
         _ => const Center(child: CircularProgressIndicator()),
       },
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-          child: FilledButton(
-            style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
-            onPressed: () => context.go(AppRoutes.workout),
-            child: const Text(WorkoutStrings.done),
-          ),
-        ),
-      ),
+      bottomNavigationBar: fromHistory
+          ? null
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: FilledButton(
+                  style: FilledButton.styleFrom(minimumSize: const Size(0, 52)),
+                  onPressed: () => context.go(AppRoutes.workout),
+                  child: const Text(WorkoutStrings.done),
+                ),
+              ),
+            ),
     );
   }
 }
 
 class _SummaryView extends StatelessWidget {
-  const _SummaryView({required this.summary, required this.catalog});
+  const _SummaryView({
+    required this.summary,
+    required this.catalog,
+    required this.fromHistory,
+  });
 
   final SessionSummary summary;
   final Map<String, Exercise> catalog;
+  final bool fromHistory;
 
   WeightUnit _unitOf(String exerciseId) =>
       catalog[exerciseId]?.preferredUnit ?? WeightUnit.kg;
@@ -75,13 +152,22 @@ class _SummaryView extends StatelessWidget {
     final comparison = summary.comparison;
     final volumeUnit = _volumeUnit;
     final routineName = session.routineName;
+    final localizations = MaterialLocalizations.of(context);
+    final startedAt = session.startedAt.toLocal();
+    final when = WorkoutStrings.startedAt(
+      localizations.formatMediumDate(startedAt),
+      localizations.formatTimeOfDay(TimeOfDay.fromDateTime(startedAt)),
+    );
 
     final note = switch (comparison) {
       final c? => WorkoutStrings.comparedWith(
         MaterialLocalizations.of(context)
             .formatShortMonthDay(c.previousStartedAt.toLocal()),
       ),
-      null when !session.isFree => WorkoutStrings.firstTimeDay,
+      null when !session.isFree =>
+        fromHistory
+            ? WorkoutStrings.firstTimeDayInHistory
+            : WorkoutStrings.firstTimeDay,
       null => null,
     };
 
@@ -92,7 +178,7 @@ class _SummaryView extends StatelessWidget {
           session.routineDayName ?? WorkoutStrings.freeSession,
           style: theme.textTheme.headlineSmall,
         ),
-        if (routineName != null) Text(routineName, style: muted),
+        Text([?routineName, when].join(' · '), style: muted),
         if (note != null) ...[
           const SizedBox(height: 8),
           Text(note, style: muted),
@@ -168,6 +254,23 @@ class _SummaryView extends StatelessWidget {
             ),
           ),
         ),
+        if (session.notes.isNotEmpty)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    WorkoutStrings.sessionNotes,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(session.notes, style: theme.textTheme.bodyMedium),
+                ],
+              ),
+            ),
+          ),
       ],
     );
   }

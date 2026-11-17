@@ -22,10 +22,15 @@ class SessionExerciseCard extends ConsumerWidget {
   const SessionExerciseCard({
     required this.entry,
     required this.exercise,
+    this.showLastTime = true,
     super.key,
   });
 
   final SessionExercise entry;
+
+  /// Whether to show what was done the last time, which only helps while
+  /// training.
+  final bool showLastTime;
 
   /// `null` when the exercise was deleted from the library.
   final Exercise? exercise;
@@ -130,10 +135,13 @@ class SessionExerciseCard extends ConsumerWidget {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 8, 8, 4),
-              child: _LastTime(exerciseId: entry.exerciseId, unit: _unit),
-            ),
+            if (showLastTime)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 8, 8, 4),
+                child: _LastTime(exerciseId: entry.exerciseId, unit: _unit),
+              )
+            else
+              const SizedBox(height: 8),
             if (entry.notes.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(right: 8, bottom: 4),

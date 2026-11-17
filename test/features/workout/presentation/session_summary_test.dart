@@ -1,8 +1,6 @@
 import 'package:app_entrenamiento/core/routing/app_routes.dart';
 import 'package:app_entrenamiento/core/units/weight_conversion.dart';
 import 'package:app_entrenamiento/core/units/weight_unit.dart';
-import 'package:app_entrenamiento/features/workout/domain/enums/session_status.dart';
-import 'package:app_entrenamiento/features/workout/domain/workout_session.dart';
 import 'package:app_entrenamiento/features/workout/presentation/workout_strings.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -19,45 +17,6 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
 
 Finder _dialogButton(String label) =>
     find.descendant(of: find.byType(AlertDialog), matching: find.text(label));
-
-/// A finished session of the "Push" day (or a free one), lasting
-/// [minutes], with one exercise whose (weight in kg, reps) [sets] are all
-/// completed.
-WorkoutSession _finished({
-  required String id,
-  required DateTime startedAt,
-  required int minutes,
-  required List<(double, int)> sets,
-  String? routineDayId = 'd1',
-  String exerciseId = 'bench',
-}) => WorkoutSession(
-  id: id,
-  routineDayId: routineDayId,
-  routineName: routineDayId == null ? null : 'PPL',
-  routineDayName: routineDayId == null ? null : 'Push',
-  startedAt: startedAt,
-  endedAt: startedAt.add(Duration(minutes: minutes)),
-  status: SessionStatus.completed,
-  exercises: [
-    SessionExercise(
-      id: '$id-e',
-      sessionId: id,
-      exerciseId: exerciseId,
-      position: 0,
-      sets: [
-        for (final (i, (weightKg, reps)) in sets.indexed)
-          SetEntry(
-            id: '$id-s$i',
-            sessionExerciseId: '$id-e',
-            setNumber: i + 1,
-            weightKg: weightKg,
-            reps: reps,
-            isCompleted: true,
-          ),
-      ],
-    ),
-  ],
-);
 
 void main() {
   testWidgets('given all sets completed, when the session is finished, '
@@ -86,20 +45,20 @@ void main() {
 
   testWidgets('given a previous session of the same day, when the summary '
       'opens, then each total is compared with it', (tester) async {
-    final previous = _finished(
+    final previous = finishedSession(
       id: 'before',
       startedAt: DateTime.utc(2026, 11, 12, 9),
       minutes: 50,
       sets: [(60, 8), (60, 8)],
     );
-    final current = _finished(
+    final current = finishedSession(
       id: 'now',
       startedAt: DateTime.utc(2026, 11, 14, 9),
       minutes: 55,
       sets: [(62.5, 8), (62.5, 8), (62.5, 6)],
     );
     // An older session of the day is not the one compared with.
-    final older = _finished(
+    final older = finishedSession(
       id: 'older',
       startedAt: DateTime.utc(2026, 11, 10, 9),
       minutes: 10,
@@ -125,13 +84,13 @@ void main() {
 
   testWidgets('given a session that did less than the previous one, '
       'when the summary opens, then the decreases are shown', (tester) async {
-    final previous = _finished(
+    final previous = finishedSession(
       id: 'before',
       startedAt: DateTime.utc(2026, 11, 12, 9),
       minutes: 60,
       sets: [(60, 8), (60, 8)],
     );
-    final current = _finished(
+    final current = finishedSession(
       id: 'now',
       startedAt: DateTime.utc(2026, 11, 14, 9),
       minutes: 40,
@@ -154,7 +113,7 @@ void main() {
 
   testWidgets('given a free session of an exercise in lb, when the summary '
       'opens, then weights are in lb and nothing is compared', (tester) async {
-    final session = _finished(
+    final session = finishedSession(
       id: 'free',
       routineDayId: null,
       exerciseId: fly.id,
